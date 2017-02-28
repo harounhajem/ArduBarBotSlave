@@ -15,6 +15,7 @@ void setup()
 	Serial.begin(9600);
 	pinMode(ledLamp, OUTPUT);
 	digitalWrite(ledLamp, LOW);
+	SetMockDATA();
 }
 
 
@@ -26,9 +27,39 @@ void loop()
 	//ReadBytesOfArray();
 	//ReadCommand();
 	//SendMessageOnCommand();
-	btCommunication.SendIngridients(myContainers);
+	if (Serial3.available())
+	{
+		int msg = Serial3.read();
+		switch (msg)
+		{
+		case 'e':
+			btCommunication.SendIngridients(myContainers);
+			break;
+		default:
+			Serial.print("Unkown command sent: ");
+			Serial.println(msg);
+			break;
+		}
+	}
 }
+// SET MOCKDATA
+void SetMockDATA() {
+	if (!myContainers[0].SetName("Margaritas") ||
+		!myContainers[1].SetName("Vodka") ||
+		!myContainers[2].SetName("Tequila") ||
+		!myContainers[3].SetName("Whiskey") ||
+		!myContainers[4].SetName("Braunstein Gylden") ||
+		!myContainers[5].SetName("Ekologiska Osterlensnapsar"))
+	{
+		Serial.print("naming error");
+	}
 
+	for (short i = 0; i < 6; i++)
+	{
+		myContainers[i].SetAmount(random(100, 2500));
+	}
+
+}
 
 
 // GET DATA

@@ -12,16 +12,17 @@
 
 class CommunicationClass
 {
-	protected:
+protected:
 
-	public:
-		void init();
-		void SendIngridients(Container containers[6]);
+public:
+	void init();
+	void SendIngridients(Container containers[6]);
 
-	private:
-		String	startName ="##",
-				startAmount = "&&",
-				stopMessage = "@@";
+private:
+	String 
+		splitChar = "#",
+		endChar = "@";
+
 };
 
 extern CommunicationClass Communication;
