@@ -16,11 +16,8 @@ private:
 	int amountCl;
 
 
-protected:
-
-
 public:
-	void init();
+	Container();
 
 	String GetName();
 	bool SetName(String newName);

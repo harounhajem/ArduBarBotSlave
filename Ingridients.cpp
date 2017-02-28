@@ -4,12 +4,13 @@
 
 #include "Ingridients.h"
 
-void Container::init()
+Container::Container()
 {
 	name = "empty";
 	amountCl = 0;
-
 }
+
+
 
 String Container::GetName()
 {

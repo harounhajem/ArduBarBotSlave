@@ -1,8 +1,13 @@
+#include "Communication.h"
 #include "Ingridients.h"
+#include "Communication.h"
+
 #define ledLamp 2
 String readString;
 
 Container myContainers[6];
+CommunicationClass btCommunication;
+
 
 void setup()
 {
@@ -10,7 +15,6 @@ void setup()
 	Serial.begin(9600);
 	pinMode(ledLamp, OUTPUT);
 	digitalWrite(ledLamp, LOW);
-
 }
 
 
@@ -21,8 +25,8 @@ void loop()
 	//SendIngridents();
 	//ReadBytesOfArray();
 	//ReadCommand();
-	SendMessageOnCommand();
-
+	//SendMessageOnCommand();
+	btCommunication.SendIngridients(myContainers);
 }
 
 
@@ -36,7 +40,7 @@ void ReadBytesOfArray() {
 
 	starttime = millis();
 
-	while ((Serial.available()< MessageArrayLength) && ((millis() - starttime) < MAX_MILLIS_TO_WAIT))
+	while ((Serial.available() < MessageArrayLength) && ((millis() - starttime) < MAX_MILLIS_TO_WAIT))
 	{
 		// hang in this loop until we either get 9 bytes of data or 1 second
 		// has gone by
@@ -50,7 +54,7 @@ void ReadBytesOfArray() {
 	else
 	{
 		char *RFin_bytes = new char[MessageArrayLength];
-		for (int n = 0; n<MessageArrayLength; n++)
+		for (int n = 0; n < MessageArrayLength; n++)
 			RFin_bytes[n] = Serial.read(); // Then: Get them.
 
 		for (size_t i = 0; i < sizeof(RFin_bytes); i++)
