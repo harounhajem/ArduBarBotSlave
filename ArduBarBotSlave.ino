@@ -12,14 +12,14 @@ CommunicationClass btCommunication;
 void setup()
 {
 	Serial3.begin(230400);
-	Serial.begin(9600);
+	Serial.begin(115200);
 	pinMode(ledLamp, OUTPUT);
 	digitalWrite(ledLamp, LOW);
 	SetMockDATA();
 }
 
 
-
+int count = 0;
 void loop()
 {
 
@@ -27,13 +27,19 @@ void loop()
 	//ReadBytesOfArray();
 	//ReadCommand();
 	//SendMessageOnCommand();
+
 	if (Serial3.available())
 	{
 		int msg = Serial3.read();
 		switch (msg)
 		{
 		case 'e':
+			if (count >0)
+			{
+				return;
+			}
 			btCommunication.SendIngridients(myContainers);
+			count++;
 			break;
 		default:
 			Serial.print("Unkown command sent: ");

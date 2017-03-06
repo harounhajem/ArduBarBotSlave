@@ -19,10 +19,13 @@ public:
 	void SendIngridients(Container containers[6]);
 
 private:
-	String 
-		splitChar = "#",
+	String
+		splitCharIndex = "$",
+		splitCharName = "#",
+		splitCharAmount = "&",
 		endChar = "@";
-
+	bool AwaitChecksum(String sentMessage);
+	bool newChecksum(String sentMessage);
 };
 
 extern CommunicationClass Communication;

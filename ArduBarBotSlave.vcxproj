@@ -96,7 +96,7 @@
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties arduino.upload.port="COM6" />
+      <UserProperties VM.DebugVariablesWindow.ColumnVisibleVariableHitCount="1" VM.DebugVariablesWindow.ColumnVisibleVariableTimeStamp="1" arduino.upload.port="COM6" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
