@@ -26,7 +26,6 @@ private:
 		endChar = "@";
 	bool AwaitChecksum(String sentMessage);
 	bool newChecksum(String sentMessage);
-	bool SerialReader(String sentMessage);
 };
 
 extern CommunicationClass Communication;

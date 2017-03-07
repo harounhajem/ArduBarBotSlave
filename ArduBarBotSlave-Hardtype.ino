@@ -11,7 +11,7 @@ CommunicationClass btCommunication;
 
 void setup()
 {
-	Serial1.begin(230400);
+	Serial3.begin(230400);
 	Serial.begin(115200);
 	pinMode(ledLamp, OUTPUT);
 	digitalWrite(ledLamp, LOW);
@@ -19,6 +19,7 @@ void setup()
 }
 
 
+int count = 0;
 void loop()
 {
 
@@ -27,18 +28,22 @@ void loop()
 	//ReadCommand();
 	//SendMessageOnCommand();
 
-	if (Serial1.available())
+	if (Serial3.available())
 	{
-		int msg = Serial1.read();
+		int msg = Serial3.read();
 		switch (msg)
 		{
 		case 'e':
+			if (count >0)
+			{
+				return;
+			}
 			btCommunication.SendIngridients(myContainers);
+			count++;
 			break;
 		default:
 			Serial.print("Unkown command sent: ");
 			Serial.println(msg);
-			Serial1.read();
 			break;
 		}
 	}
@@ -139,15 +144,15 @@ void SendIngridents() {
 
 }
 void SendMessageOnCommand() {
-	while (Serial1.available() > 0)
+	while (Serial3.available() > 0)
 	{
 
-		int msg = Serial1.read();
-		Serial.print(Serial1.read());
+		int msg = Serial3.read();
+		Serial.print(Serial3.read());
 		if (msg == 'e')
 		{
 
-
+			//NumberSend();
 			SendMessage();
 
 		}
@@ -168,18 +173,18 @@ void SendMessage() {
 
 	for (int i = 0; i < charCount; i++) {
 		bufferSend[i] = (byte)myStringMsg[i];
-		Serial1.write(bufferSend[i]);
+		Serial3.write(bufferSend[i]);
 		Serial.print((char)bufferSend[i]);
 	}
 	Serial.println();
-	Serial1.flush();
+	Serial3.flush();
 }
 void SendNumbers() {
 	byte bufferSend[1024];
 	for (int i = 0; i < 1024; i++) {
 		bufferSend[i] = (byte)i;
-		Serial1.print(bufferSend[i]);
-		Serial1.print(' ');
+		Serial3.print(bufferSend[i]);
+		Serial3.print(' ');
 		Serial.print((char)bufferSend[i]);
 		delay(10);
 	}
