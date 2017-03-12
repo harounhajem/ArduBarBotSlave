@@ -17,16 +17,15 @@ protected:
 public:
 	void init();
 	void SendIngridients(Container containers[6]);
+	bool DeSerializerWithChecksum(String sentMessage);
 
 private:
 	String
 		splitCharIndex = "$",
 		splitCharName = "#",
 		splitCharAmount = "&",
-		endChar = "@";
-	bool AwaitChecksum(String sentMessage);
-	bool newChecksum(String sentMessage);
-	bool SerialReader(String sentMessage);
+		splitEnd = "@";
+
 };
 
 extern CommunicationClass Communication;

@@ -12,12 +12,11 @@ void CommunicationClass::init()
 
 static boolean recvInProgress = false;
 static byte ndx = 0;
-char startMarker = '$';
-char endMarker = '@';
+
+
 char rc;
 boolean newData = false;
 const byte numChars = 50;
-//char receivedChars[numChars]; ///---> Ändrat!!!
 char receivedChars[numChars];
 void CommunicationClass::SendIngridients(Container containers[6])
 {
@@ -32,16 +31,13 @@ void CommunicationClass::SendIngridients(Container containers[6])
 		sendMessage += containers[i].GetName();
 		sendMessage += splitCharAmount;
 		sendMessage += containers[i].GetAmount();
-		sendMessage += endChar;
+		sendMessage += splitEnd;
 
-		int asynAnswer = 0;
-		int const ans = 65;
-		int counter = 0;
+		short counter = 0;
 		do
 		{
 			if (counter < 2)
 			{
-
 				Serial1.print(sendMessage);
 				Serial.print("\n\nSent:   ");
 				Serial.println(sendMessage);
@@ -53,7 +49,7 @@ void CommunicationClass::SendIngridients(Container containers[6])
 				return;
 			}
 
-		} while (!SerialReader(sendMessage));
+		} while (!DeSerializerWithChecksum(sendMessage));
 
 		Serial1.read();
 		Serial.read();
@@ -62,126 +58,19 @@ void CommunicationClass::SendIngridients(Container containers[6])
 	digitalWrite(2, HIGH);
 	delay(5500);
 }
-bool CommunicationClass::AwaitChecksum(String sentMessage)
-{
-
-#define MAX_MILLIS_TO_WAIT 500  //or whatever
-	int messageArrayLength = sentMessage.length();
-	unsigned long starttime;
-
-	starttime = millis();
-
-	while ((Serial1.available() > messageArrayLength) && ((millis() - starttime) < MAX_MILLIS_TO_WAIT))
-	{
-		// hang in this loop until we either get 9 bytes of data or 1 second
-		// has gone by
-	}
-	if (Serial1.available() < messageArrayLength)
-	{
-		// the data didn't come in - handle that problem here
-		Serial.println("ERROR - Didn't get bytes of data!");
-		Serial1.flush();
-		return false;
-	}
-	else
-	{
-		char *RFin_bytes = new char[messageArrayLength];
-		for (int n = 0; n < messageArrayLength; n++) {
-			RFin_bytes[n] = Serial1.read(); // Then: Get them.
-		}
-
-		String messageCheckSum;
-		for (size_t i = 0; i < messageArrayLength; i++)
-		{
-			messageArrayLength += RFin_bytes[i];
-			//Serial.print(RFin_bytes[i]);
-
-		}
-
-		/*Serial.print("SentMessage:");
-		Serial.println(sentMessage);
-		Serial.print("Checksum:");
-		Serial.println(messageCheckSum);
-		Serial.println("\n");*/
 
 
-		if (messageCheckSum == sentMessage)
-		{
-			Serial.println(" IS EQUAL ?");
-
-			Serial.println(messageCheckSum);
-			Serial.println(sentMessage);
-			delay(2500);
-			digitalWrite(2, HIGH);
-			int as = 66;
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-}
-bool CommunicationClass::newChecksum(String sentMessage)
-{
-	int messageArrayLength = sentMessage.length();
-	if (Serial1.available() >= messageArrayLength - 1)
-	{
-
-		unsigned long starttime;
-
-		char *RFin_bytes = new char[messageArrayLength];
-		for (int n = 0; n < messageArrayLength; n++) {
-			RFin_bytes[n] = Serial1.read(); // Then: Get them.
-		}
-
-		String messageCheckSum;
-		for (size_t i = 0; i < messageArrayLength; i++)
-		{
-			messageArrayLength += RFin_bytes[i];
-			//Serial.print(RFin_bytes[i]);
-
-		}
-		int t = 45;
-		Serial.print("Checksum: ");
-		Serial.println(messageCheckSum);
-		/*Serial.print("SentMessage:");
-		Serial.println(sentMessage);
-		Serial.print("Checksum:");
-		Serial.println(messageCheckSum);
-		Serial.println("\n");*/
-
-
-		if (messageCheckSum == sentMessage)
-		{
-			Serial.println(" IS EQUAL ?");
-
-			Serial.println(messageCheckSum);
-			Serial.println(sentMessage);
-			delay(2500);
-			int as = 66;
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-}
-
-
-bool CommunicationClass::SerialReader(String sentMessage)
+bool CommunicationClass::DeSerializerWithChecksum(String checkSum)
 {
 
 	while (Serial1.available() > 0 && newData == false) {
 		rc = Serial1.read();
 
 		if (recvInProgress == true) {
-			if (rc != endMarker) {
+			if (rc != splitEnd[0]) {
 				receivedChars[ndx] = rc;
 				ndx++;
-				//if (ndx >= numChars) {
+				//if (ndx >= numChars) {   /// Constrainning?
 				//	ndx = numChars - 1;
 				//}
 			}
@@ -192,7 +81,7 @@ bool CommunicationClass::SerialReader(String sentMessage)
 				newData = true;
 			}
 		}
-		else if (rc == startMarker) {
+		else if (rc == splitCharIndex[0]) {
 			receivedChars[ndx] = rc;
 			recvInProgress = true;
 			ndx++;
@@ -210,7 +99,7 @@ bool CommunicationClass::SerialReader(String sentMessage)
 		memset(receivedChars, 0, numChars);
 	}
 
-	if (sentMessage == tempMsg)
+	if (checkSum == tempMsg)
 	{
 
 		return true;
@@ -221,6 +110,115 @@ bool CommunicationClass::SerialReader(String sentMessage)
 		return false;
 	}
 }
+
+//
+//bool CommunicationClass::AwaitChecksum(String sentMessage)
+//{
+//
+//#define MAX_MILLIS_TO_WAIT 500  //or whatever
+//	int messageArrayLength = sentMessage.length();
+//	unsigned long starttime;
+//
+//	starttime = millis();
+//
+//	while ((Serial1.available() > messageArrayLength) && ((millis() - starttime) < MAX_MILLIS_TO_WAIT))
+//	{
+//		// hang in this loop until we either get 9 bytes of data or 1 second
+//		// has gone by
+//	}
+//	if (Serial1.available() < messageArrayLength)
+//	{
+//		// the data didn't come in - handle that problem here
+//		Serial.println("ERROR - Didn't get bytes of data!");
+//		Serial1.flush();
+//		return false;
+//	}
+//	else
+//	{
+//		char *RFin_bytes = new char[messageArrayLength];
+//		for (int n = 0; n < messageArrayLength; n++) {
+//			RFin_bytes[n] = Serial1.read(); // Then: Get them.
+//		}
+//
+//		String messageCheckSum;
+//		for (size_t i = 0; i < messageArrayLength; i++)
+//		{
+//			messageArrayLength += RFin_bytes[i];
+//			//Serial.print(RFin_bytes[i]);
+//
+//		}
+//
+//		/*Serial.print("SentMessage:");
+//		Serial.println(sentMessage);
+//		Serial.print("Checksum:");
+//		Serial.println(messageCheckSum);
+//		Serial.println("\n");*/
+//
+//
+//		if (messageCheckSum == sentMessage)
+//		{
+//			Serial.println(" IS EQUAL ?");
+//
+//			Serial.println(messageCheckSum);
+//			Serial.println(sentMessage);
+//			delay(2500);
+//			digitalWrite(2, HIGH);
+//			int as = 66;
+//			return true;
+//		}
+//		else
+//		{
+//			return false;
+//		}
+//	}
+//}
+//bool CommunicationClass::newChecksum(String sentMessage)
+//{
+//	int messageArrayLength = sentMessage.length();
+//	if (Serial1.available() >= messageArrayLength - 1)
+//	{
+//
+//		unsigned long starttime;
+//
+//		char *RFin_bytes = new char[messageArrayLength];
+//		for (int n = 0; n < messageArrayLength; n++) {
+//			RFin_bytes[n] = Serial1.read(); // Then: Get them.
+//		}
+//
+//		String messageCheckSum;
+//		for (size_t i = 0; i < messageArrayLength; i++)
+//		{
+//			messageArrayLength += RFin_bytes[i];
+//			//Serial.print(RFin_bytes[i]);
+//
+//		}
+//		int t = 45;
+//		Serial.print("Checksum: ");
+//		Serial.println(messageCheckSum);
+//		/*Serial.print("SentMessage:");
+//		Serial.println(sentMessage);
+//		Serial.print("Checksum:");
+//		Serial.println(messageCheckSum);
+//		Serial.println("\n");*/
+//
+//
+//		if (messageCheckSum == sentMessage)
+//		{
+//			Serial.println(" IS EQUAL ?");
+//
+//			Serial.println(messageCheckSum);
+//			Serial.println(sentMessage);
+//			delay(2500);
+//			int as = 66;
+//			return true;
+//		}
+//		else
+//		{
+//			return false;
+//		}
+//	}
+//
+//}
 //bool AwaitChecksum(String sentMessage) {
 //
 //#define MAX_MILLIS_TO_WAIT 50  //or whatever
@@ -263,10 +261,6 @@ bool CommunicationClass::SerialReader(String sentMessage)
 //		}
 //	}
 //}
-
-
-
-
 
 CommunicationClass Communication;
 

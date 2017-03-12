@@ -18,22 +18,33 @@ void setup()
 	SetMockDATA();
 }
 
-
+unsigned long timerRecive;
 void loop()
 {
-
-	//SendIngridents();
-	//ReadBytesOfArray();
-	//ReadCommand();
-	//SendMessageOnCommand();
-
 	if (Serial1.available())
 	{
 		int msg = Serial1.read();
+		Serial.print("\n\nCommand recived: ");
+		Serial.println(msg);
 		switch (msg)
 		{
 		case 'e':
+			// Send ingridients
 			btCommunication.SendIngridients(myContainers);
+			break;
+		case 'd':
+			// Update ingridients
+			timerRecive = millis();
+			delay(100);
+			do
+			{
+			Communication.DeSerializerWithChecksum("a");
+			} while ((millis() - timerRecive) > 150);
+
+			break;
+		case 'f':
+			// Get Cocktail order
+			Serial.println("Get cocktail command");
 			break;
 		default:
 			Serial.print("Unkown command sent: ");
@@ -67,27 +78,27 @@ void SetMockDATA() {
 void ReadBytesOfArray() {
 
 #define MAX_MILLIS_TO_WAIT 1000  //or whatever
-#define MessageArrayLength 2
+#define MessageArrayLength 256
 	unsigned long starttime;
 
 	starttime = millis();
 
-	while ((Serial.available() < MessageArrayLength) && ((millis() - starttime) < MAX_MILLIS_TO_WAIT))
+	while ((Serial1.available() < MessageArrayLength) && ((millis() - starttime) < MAX_MILLIS_TO_WAIT))
 	{
 		// hang in this loop until we either get 9 bytes of data or 1 second
 		// has gone by
 	}
-	if (Serial.available() < MessageArrayLength)
+	if (Serial1.available() < MessageArrayLength)
 	{
 		// the data didn't come in - handle that problem here
 		Serial.println("ERROR - Didn't get 9 bytes of data!");
-		Serial.flush();
+		Serial1.read();
 	}
 	else
 	{
 		char *RFin_bytes = new char[MessageArrayLength];
 		for (int n = 0; n < MessageArrayLength; n++)
-			RFin_bytes[n] = Serial.read(); // Then: Get them.
+			RFin_bytes[n] = Serial1.read(); // Then: Get them.
 
 		for (size_t i = 0; i < sizeof(RFin_bytes); i++)
 		{
@@ -99,12 +110,13 @@ void ReadBytesOfArray() {
 }
 void ReadCommand() {
 
-	while (Serial.available())
+	while (Serial1.available())
 	{
 		byte x[1];
-		Serial.readBytes(x, 1);
-		Serial.println((char*)x);
+		Serial1.readBytes(x, 1);
+		Serial.print((char*)x);
 	}
+	Serial.println();
 }
 
 
