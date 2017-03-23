@@ -44,23 +44,61 @@ void CommunicationClass::SendIngridients(Container containers[6])
 				counter++;
 			}
 
-			if (millis() - timeOutTimer > 12000UL)
+			if (millis() - timeOutTimer > 5000UL)
 			{
 				return;
 			}
 
-		} while (!DeSerializerWithChecksum(sendMessage));
+		} while (!ReadIncomingMessageWithChecksum(sendMessage));
 
 		Serial1.read();
 		Serial.read();
 	}
 
-	digitalWrite(2, HIGH);
-	delay(5500);
+	delay(250);
 }
 
+String tempString;
+String CommunicationClass::ReadIncomingMessage() {
 
-bool CommunicationClass::DeSerializerWithChecksum(String checkSum)
+	while (Serial1.available() > 0 && newData == false) {
+		rc = Serial1.read();
+
+		if (recvInProgress == true) {
+			if (rc != splitEnd[0]) {
+				receivedChars[ndx] = rc;
+				ndx++;
+				//if (ndx >= numChars) {   /// Constrainning?
+				//	ndx = numChars - 1;
+				//}
+			}
+			else {
+				receivedChars[ndx] = rc;
+				recvInProgress = false;
+				ndx = 0;
+				newData = true;
+			}
+		}
+		else if (rc == splitCharIndex[0]) {
+			receivedChars[ndx] = rc;
+			recvInProgress = true;
+			ndx++;
+		}
+	}
+
+
+	if (newData == true) {
+		newData = false;
+		Serial.print("Recived:");
+		Serial.println(receivedChars);
+		tempString = receivedChars;
+		memset(receivedChars, 0, numChars); // Reset array of chars, the message
+		return tempString;
+	}
+
+}
+String tempMessage;
+bool CommunicationClass::ReadIncomingMessageWithChecksum(String checkSum)
 {
 
 	while (Serial1.available() > 0 && newData == false) {
@@ -89,24 +127,21 @@ bool CommunicationClass::DeSerializerWithChecksum(String checkSum)
 	}
 
 
-	String tempMsg;
 	if (newData == true) {
 		newData = false;
 		Serial.print("Recived:");
 		Serial.println(receivedChars);
-
-		tempMsg = receivedChars;
-		memset(receivedChars, 0, numChars);
+		tempMessage = receivedChars;
+		memset(receivedChars, 0, numChars); // Reset array of chars, the message
 	}
 
-	if (checkSum == tempMsg)
-	{
 
+	if (checkSum == tempMessage)
+	{
 		return true;
 	}
 	else
 	{
-
 		return false;
 	}
 }
