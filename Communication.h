@@ -17,14 +17,15 @@ protected:
 public:
 	void init();
 	void SendIngridients(Container containers[6]);
-	bool DeSerializerWithChecksum(String sentMessage);
-
-private:
+	bool ReadIncomingMessageWithChecksum(String sentMessage);
+	String ReadIncomingMessage();
 	String
 		splitCharIndex = "$",
 		splitCharName = "#",
 		splitCharAmount = "&",
 		splitEnd = "@";
+
+private:
 
 };
 

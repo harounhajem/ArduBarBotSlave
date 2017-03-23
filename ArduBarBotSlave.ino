@@ -1,51 +1,92 @@
+#include "DrinkOrder.h"
+#include <flash_efc.h>
+#include <efc.h>
+#include <DueFlashStorage.h>
 #include "Communication.h"
 #include "Ingridients.h"
-#include "Communication.h"
 
+#pragma region PinOut
+
+// Pinout
 #define ledLamp 2
+#pragma endregion
+
+
+#pragma region Variables
+
+
+// Variables
 String readString;
+unsigned long timerRecive;
 
-Container myContainers[6];
-CommunicationClass btCommunication;
 
+
+
+// Class declaration
+struct SaveContainer {  // Formatting table for saving BarBotContainer
+	String Bottle[14];
+};
+
+
+Container barBotContainer[6];	// Barbot alcohol container
+CommunicationClass btCommunication;  // Bluetooth communication
+DueFlashStorage EEProm;		// EEProm on Arduino DUE
+
+Container getBarBotContainer[6];
+SaveContainer getSave;
+
+#pragma endregion
 
 void setup()
 {
 	Serial1.begin(230400);
 	Serial.begin(115200);
-	pinMode(ledLamp, OUTPUT);
-	digitalWrite(ledLamp, LOW);
-	SetMockDATA();
+	//SetMockDATA();
+
+	SaveData();
+	GetSavedData();
 }
 
-unsigned long timerRecive;
 void loop()
 {
+	//// Read Saved Data
+	//Serial.print("\n\nConverted: \n");
+	//for (size_t i = 0; i < 6; i++)
+	//{
+	//	Serial.print(getBarBotContainer[i].GetName());
+	//	Serial.print("  ");
+	//	Serial.println(getBarBotContainer[i].GetAmount());
+	//	delay(150);
+	//} 
+
 	if (Serial1.available())
 	{
 		int msg = Serial1.read();
+
+
 		Serial.print("\n\nCommand recived: ");
 		Serial.println(msg);
+
 		switch (msg)
 		{
 		case 'e':
 			// Send ingridients
-			btCommunication.SendIngridients(myContainers);
+			Serial.println("Send ingridients");
+			btCommunication.SendIngridients(barBotContainer);
 			break;
+
 		case 'd':
 			// Update ingridients
-			timerRecive = millis();
-			delay(100);
-			do
-			{
-			Communication.DeSerializerWithChecksum("a");
-			} while ((millis() - timerRecive) > 150);
-
+			Serial.println("Update ingridients");
+			UpdateIngridients();
 			break;
+
 		case 'f':
 			// Get Cocktail order
 			Serial.println("Get cocktail command");
+			GetDrinkOrder();
 			break;
+
 		default:
 			Serial.print("Unkown command sent: ");
 			Serial.println(msg);
@@ -53,147 +94,260 @@ void loop()
 			break;
 		}
 	}
+
+
 }
-// SET MOCKDATA
-void SetMockDATA() {
-	if (!myContainers[0].SetName("Margaritas") ||
-		!myContainers[1].SetName("Vodka") ||
-		!myContainers[2].SetName("Tequila") ||
-		!myContainers[3].SetName("Whiskey") ||
-		!myContainers[4].SetName("Braunstein Gylden") ||
-		!myContainers[5].SetName("Ekologiska Osterlensnapsar"))
-	{
-		Serial.print("naming error");
-	}
+
+
+#pragma region Save functions
+
+
+// Save Functions
+void SaveData() {
+
+#pragma region SetMock
+
+
+	barBotContainer[0].SetName("Margaritas");
+	barBotContainer[1].SetName("Vodka");
+	barBotContainer[2].SetName("Tequila");
+	barBotContainer[3].SetName("Whiskey");
+	barBotContainer[4].SetName("Braunstein Gylden");
+	barBotContainer[5].SetName("Ekologiska Osterlensnapsar");
 
 	for (short i = 0; i < 6; i++)
 	{
-		myContainers[i].SetAmount(random(100, 2500));
+		barBotContainer[i].SetAmount(random(100, 2500));
 	}
+
+#pragma endregion
+
+
+#pragma region Save Mechanism
+
+
+	// 1. Convert to String
+	SaveContainer varSave{
+		"CorruptMockupData",
+		"CorruptMockupData",
+		barBotContainer[0].GetName(),
+		String(barBotContainer[0].GetAmount()),
+		barBotContainer[1].GetName(),
+		String(barBotContainer[1].GetAmount()),
+		barBotContainer[2].GetName(),
+		String(barBotContainer[2].GetAmount()),
+		barBotContainer[3].GetName(),
+		String(barBotContainer[3].GetAmount()),
+		barBotContainer[4].GetName(),
+		String(barBotContainer[4].GetAmount()),
+		barBotContainer[5].GetName(),
+		String(barBotContainer[5].GetAmount())
+	};
+
+	// 2. Save
+	byte b2[sizeof(varSave)]; // create byte array to store the struct
+	memcpy(b2, &varSave, sizeof(varSave)); // copy the struct to the byte array
+	EEProm.write(4, b2, sizeof(varSave)); // write byte array to flash at address 4
+#pragma endregion
 
 }
+void GetSavedData() {
+
+#pragma region Load Mechanism
 
 
-// GET DATA
-void ReadBytesOfArray() {
+	// 3. Load from flash memory
+	byte* b = EEProm.readAddress(4); // byte array which is read from flash at adress 4
+	getSave;
+	memcpy(&getSave, b, sizeof(SaveContainer)); // copy byte array to temporary struct
 
-#define MAX_MILLIS_TO_WAIT 1000  //or whatever
-#define MessageArrayLength 256
-	unsigned long starttime;
 
-	starttime = millis();
 
-	while ((Serial1.available() < MessageArrayLength) && ((millis() - starttime) < MAX_MILLIS_TO_WAIT))
+
+	// 4. Format saved data
+	int counter = 0;
+
+	for (size_t i = 2; i < 14; i++)
 	{
-		// hang in this loop until we either get 9 bytes of data or 1 second
-		// has gone by
-	}
-	if (Serial1.available() < MessageArrayLength)
-	{
-		// the data didn't come in - handle that problem here
-		Serial.println("ERROR - Didn't get 9 bytes of data!");
-		Serial1.read();
-	}
-	else
-	{
-		char *RFin_bytes = new char[MessageArrayLength];
-		for (int n = 0; n < MessageArrayLength; n++)
-			RFin_bytes[n] = Serial1.read(); // Then: Get them.
-
-		for (size_t i = 0; i < sizeof(RFin_bytes); i++)
+		if (i % 2 == 0)
 		{
-			Serial.print(RFin_bytes[i]);
-			Serial.print(" ");
+			getBarBotContainer[counter].SetName(getSave.Bottle[i]);
 		}
-		Serial.println();
+		else
+		{
+			long x = getSave.Bottle[i].toInt();
+			getBarBotContainer[counter].SetAmount(x);
+			counter++;
+		}
 	}
+#pragma endregion
 }
-void ReadCommand() {
-
-	while (Serial1.available())
-	{
-		byte x[1];
-		Serial1.readBytes(x, 1);
-		Serial.print((char*)x);
-	}
-	Serial.println();
-}
+#pragma endregion
 
 
-// POST DATA
-void SendIngridents() {
-
-	// Send data to cellphone?
-
-	Serial.print(567);
+void UpdateIngridients() {
 
 
-
-
-
-
-
-
-
-
-
-	//myIngridiensts[1].Refill("Vodka", 300);
-	//if (Serial.available())
+	// recive ingridient
+	timerRecive = millis();
+	delay(100);
+	String recivedMessage = "none";
+	//do
 	//{
-	//	int asd = (int)Serial.read();
-	//	if (asd == 40 )
-	//	{
-	//		Serial.print(myIngridiensts[1].GetName());
-	//	}
-	//}
+	//} while ((millis() - timerRecive) > 150);
 
 
+	// 1. Ta emot nya flaskan
+	recivedMessage = Communication.ReadIncomingMessage();
+	Serial.println(recivedMessage);
 
+	// 2. Deserialize meddalandet, ta ut Position, Namn, Amount
+	const char charBeginDelimiter = Communication.splitCharIndex[0]; // '$'
+	const char charNameDelimiter = Communication.splitCharName[0];   // '#'
+	const char charAmountDelimiter = Communication.splitCharAmount[0]; // '&'
+	const char charEndDelimiter = Communication.splitEnd[0]; // '@'
+
+
+	int ingridientsPos = recivedMessage.substring(recivedMessage.indexOf(charBeginDelimiter) + 1, recivedMessage.indexOf(charNameDelimiter)).toInt();
+	String ingridientsName = recivedMessage.substring(recivedMessage.indexOf(charNameDelimiter) + 1, recivedMessage.indexOf(charAmountDelimiter));
+	int ingridientsAmount = recivedMessage.substring(recivedMessage.indexOf(charAmountDelimiter) + 1, recivedMessage.indexOf(charEndDelimiter)).toInt();
+
+	Serial.println(ingridientsPos);
+	Serial.println(ingridientsName);
+	Serial.println(ingridientsAmount);
+
+	// 3. Updatera BarBotContainer[i].SetName
+	
+	getBarBotContainer[ingridientsPos].SetName(ingridientsName);
+	getBarBotContainer[ingridientsPos].SetAmount(ingridientsAmount);
+
+	// 4. Spara värdet
+	SaveData();
+	
 }
-void SendMessageOnCommand() {
-	while (Serial1.available() > 0)
+
+void GetDrinkOrder() {
+
+	// 1. Ta emot ett meddelande
+	delay(100);
+	String recivedMessage = "none";
+	recivedMessage = Communication.ReadIncomingMessage();
+	Serial.println("Recived orderdrink: "+recivedMessage);
+
+
+		// Trim message
+
+	const char *split = ";";
+
+	String msgTrim = recivedMessage.substring(1, recivedMessage.length() - 1); // Trimma meddelandet
+
+	Serial.println("Message trim: " + msgTrim);
+
+	char input[msgTrim.length()];
+
+	msgTrim.toCharArray(input, msgTrim.length());  // Konvertera meddelandet till en CharArray
+
+	unsigned int countIngridients = 0; // Räkna hur många flaskor som ordern innehåller
+
+	for (size_t i = 0; i < msgTrim.length(); i++)
 	{
-
-		int msg = Serial1.read();
-		Serial.print(Serial1.read());
-		if (msg == 'e')
+		if (msgTrim.charAt(i) == ';')
 		{
-
-
-			SendMessage();
-
+			countIngridients++;
 		}
 	}
-	digitalWrite(ledLamp, LOW);
-}
 
-void SendMessage() {
 
-	// Två första tecknen eller första tecknet försvinner
+		// Split message
 
-	String myStringMsg = "## Vodka Martini: 10";
-	int charCount = 21;
-	Serial.println(charCount);
+	countIngridients = countIngridients / 2;
+	//Serial.print("countIngridients:");
+	//Serial.println(countIngridients);
 
-	byte bufferSend[1024];
-	digitalWrite(ledLamp, HIGH);
+	DrinkOrderClass drinkOrder[countIngridients];
 
-	for (int i = 0; i < charCount; i++) {
-		bufferSend[i] = (byte)myStringMsg[i];
-		Serial1.write(bufferSend[i]);
-		Serial.print((char)bufferSend[i]);
+	unsigned short counterToken = 0;
+
+	unsigned short counterIndex = 0;
+
+	char *token = strtok(input, split);
+
+	while (token != NULL)
+	{
+		//Serial.print("Saved: ");
+
+		if (counterToken % 2 == 0)
+		{
+			drinkOrder[counterIndex].bottleIndex = String(token).toInt();
+			//Serial.print(drinkOrder[counterIndex].bottleIndex);
+		}
+		else
+		{
+			drinkOrder[counterIndex].amount = String(token).toInt();
+			//Serial.print(drinkOrder[counterIndex].amount);
+			counterIndex++;
+
+		}
+		//Serial.print("\nToken: ");
+		//Serial.println(token);
+
+		token = strtok(NULL, split);
+		counterToken++;
 	}
-	Serial.println();
-	Serial1.flush();
-}
-void SendNumbers() {
-	byte bufferSend[1024];
-	for (int i = 0; i < 1024; i++) {
-		bufferSend[i] = (byte)i;
-		Serial1.print(bufferSend[i]);
-		Serial1.print(' ');
-		Serial.print((char)bufferSend[i]);
-		delay(10);
+
+	Serial.println("After split:");
+	for (size_t i = 0; i < countIngridients; i++)
+	{
+		Serial.print(" Index :");
+		Serial.print(drinkOrder[i].bottleIndex);
+		Serial.print("  Amount :");
+		Serial.println(drinkOrder[i].amount);
 	}
 
+
+	// 4. Validate that there is enough liquid, 
+	//    answer back OK 1, NOT 0
+	bool canProduce = true;
+	for (size_t i = 0; i < countIngridients; i++)
+	{
+		if ((barBotContainer[drinkOrder[i].bottleIndex].GetAmount() - drinkOrder[i].amount) < 0) {
+			Serial.print("\n ORDER\nIndex :");
+			Serial.print(drinkOrder[i].bottleIndex);
+			Serial.print("  Amount :");
+			Serial.println(drinkOrder[i].amount);
+
+			Serial.print(barBotContainer[drinkOrder[i].bottleIndex].GetName() + "  ");
+			Serial.println(barBotContainer[drinkOrder[i].bottleIndex].GetAmount());
+			Serial.println("FAIL: TO BIG ORDER");
+			canProduce = false;
+			break;
+		}
+	}
+
+	if (canProduce)
+	{
+		Serial1.println("OK");
+		Serial.println("OK");
+	}
+
+	// 5. Send drink to machine
+	ProduceDrinkOrder(drinkOrder, countIngridients);
+
 }
+
+void ProduceDrinkOrder(DrinkOrderClass drinkOrder[], int countIngridients) {
+
+	Serial.println("\n\nProduce:\n");
+	for (size_t i = 0; i < 6; i++)
+	{
+		Serial.print(" Index :");
+		Serial.print(drinkOrder[i].bottleIndex);
+		Serial.print("  Amount :");
+		Serial.println(drinkOrder[i].amount);
+	}
+
+	// TODO: 6. Send conformation when the drink is ready?
+}
+
+
+

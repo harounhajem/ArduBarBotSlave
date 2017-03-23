@@ -27,12 +27,18 @@
     <ClInclude Include="Communication.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DrinkOrder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Ingridients.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Communication.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DrinkOrder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
