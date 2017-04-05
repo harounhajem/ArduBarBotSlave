@@ -1,3 +1,5 @@
+#include "DrinkMixer.h"
+#include <Adafruit_NeoPixel.h>
 #include "DrinkOrder.h"
 #include <flash_efc.h>
 #include <efc.h>
@@ -5,11 +7,30 @@
 #include "Communication.h"
 #include "Ingridients.h"
 
+
 #pragma region PinOut
 
 // Pinout
-#define ledLamp 2
+#define ledNeoPixel 13
+#define airPump 8
+#define motor 12
+#define bottle1 2
+#define bottle2 3
+#define bottle3 4
+#define bottle4 5
+#define bottle5 6
+#define bottle6 7
 #pragma endregion
+
+
+#define NUMstrip 16
+
+// When we setup the NeoPixel library, we tell it how many strip, and which pin to use to send signals.
+// Note that for older NeoPixel strips you might need to change the third parameter--see the strandtest
+// example for more information on possible values.
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUMstrip, ledNeoPixel, NEO_GRB + NEO_KHZ800);
+
+int delayval = 500; // delay for half a second
 
 
 #pragma region Variables

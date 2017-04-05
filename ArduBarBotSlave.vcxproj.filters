@@ -30,6 +30,9 @@
     <ClInclude Include="DrinkOrder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DrinkMixer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Ingridients.cpp">
@@ -39,6 +42,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DrinkOrder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DrinkMixer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
