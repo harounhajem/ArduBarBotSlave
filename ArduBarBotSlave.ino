@@ -1,3 +1,4 @@
+#include "NeoPixelHandler.h"
 #include "DrinkMixer.h"
 #include <Adafruit_NeoPixel.h>
 #include "DrinkOrder.h"
@@ -11,7 +12,7 @@
 #pragma region PinOut
 
 // Pinout
-#define ledNeoPixel 13
+#define ledNeoPixel 10
 #define airPump 8
 #define motor 12
 #define bottle1 2
@@ -20,17 +21,17 @@
 #define bottle4 5
 #define bottle5 6
 #define bottle6 7
+#define NUMstrip 16
 #pragma endregion
 
 
-#define NUMstrip 16
 
 // When we setup the NeoPixel library, we tell it how many strip, and which pin to use to send signals.
 // Note that for older NeoPixel strips you might need to change the third parameter--see the strandtest
 // example for more information on possible values.
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUMstrip, ledNeoPixel, NEO_GRB + NEO_KHZ800);
 
-int delayval = 500; // delay for half a second
+const int delayval = 500; // delay for half a second
 
 
 #pragma region Variables
@@ -48,21 +49,40 @@ struct SaveContainer {  // Formatting table for saving BarBotContainer
 	String Bottle[14];
 };
 
-
+DrinkMixerClass drinkMixer;
+NeoPixelHandlerClass neoPixelHandler;
 Container barBotContainer[6];	// Barbot alcohol container
 CommunicationClass btCommunication;  // Bluetooth communication
 DueFlashStorage EEProm;		// EEProm on Arduino DUE
 
-Container getBarBotContainer[6];
+Container tempBarBotContainer[6];
 SaveContainer getSave;
 
 #pragma endregion
 
 void setup()
 {
+
+
+	pinMode(airPump, OUTPUT);
+	pinMode(motor, OUTPUT);
+	pinMode(bottle1, OUTPUT);
+	pinMode(bottle2, OUTPUT);
+	pinMode(bottle3, OUTPUT);
+	pinMode(bottle4, OUTPUT);
+	pinMode(bottle5, OUTPUT);
+	pinMode(bottle6, OUTPUT);
+
 	Serial1.begin(230400);
 	Serial.begin(115200);
+
+
+	// Initiate classes
+
 	//SetMockDATA();
+	neoPixelHandler.Init(strip);
+
+	drinkMixer.init(airPump, motor, bottle1, bottle2, bottle3, bottle4, bottle5, bottle6);
 
 	SaveData();
 	GetSavedData();
@@ -70,15 +90,22 @@ void setup()
 
 void loop()
 {
+	//neoPixelHandler.NeoPixelRainBow(200);
+
 	//// Read Saved Data
 	//Serial.print("\n\nConverted: \n");
 	//for (size_t i = 0; i < 6; i++)
 	//{
-	//	Serial.print(getBarBotContainer[i].GetName());
+	//	Serial.print(tempBarBotContainer[i].GetName());
 	//	Serial.print("  ");
-	//	Serial.println(getBarBotContainer[i].GetAmount());
+	//	Serial.println(tempBarBotContainer[i].GetAmount());
 	//	delay(150);
 	//} 
+
+	Serial.println("Got a cocktail command");
+	ValidateDrinkOrder();
+
+
 
 	if (Serial1.available())
 	{
@@ -87,7 +114,7 @@ void loop()
 
 		Serial.print("\n\nCommand recived: ");
 		Serial.println(msg);
-
+		msg = 'f';
 		switch (msg)
 		{
 		case 'e':
@@ -103,9 +130,9 @@ void loop()
 			break;
 
 		case 'f':
-			// Get Cocktail order
-			Serial.println("Get cocktail command");
-			GetDrinkOrder();
+			// Got a Cocktail order
+			Serial.println("Got a cocktail command");
+			ValidateDrinkOrder();
 			break;
 
 		default:
@@ -126,22 +153,22 @@ void loop()
 // Save Functions
 void SaveData() {
 
-#pragma region SetMock
+	#pragma region SetMock
 
 
-	barBotContainer[0].SetName("Margaritas");
-	barBotContainer[1].SetName("Vodka");
-	barBotContainer[2].SetName("Tequila");
-	barBotContainer[3].SetName("Whiskey");
-	barBotContainer[4].SetName("Braunstein Gylden");
-	barBotContainer[5].SetName("Ekologiska Osterlensnapsar");
+		barBotContainer[0].SetName("Margaritas");
+		barBotContainer[1].SetName("Vodka");
+		barBotContainer[2].SetName("Tequila");
+		barBotContainer[3].SetName("Whiskey");
+		barBotContainer[4].SetName("Braunstein Gylden");
+		barBotContainer[5].SetName("Ekologiska Osterlensnapsar");
 
-	for (short i = 0; i < 6; i++)
-	{
-		barBotContainer[i].SetAmount(random(100, 2500));
-	}
+		for (short i = 0; i < 6; i++)
+		{
+			barBotContainer[i].SetAmount(random(100, 2500));
+		}
 
-#pragma endregion
+	#pragma endregion
 
 
 #pragma region Save Mechanism
@@ -192,12 +219,12 @@ void GetSavedData() {
 	{
 		if (i % 2 == 0)
 		{
-			getBarBotContainer[counter].SetName(getSave.Bottle[i]);
+			tempBarBotContainer[counter].SetName(getSave.Bottle[i]);
 		}
 		else
 		{
 			long x = getSave.Bottle[i].toInt();
-			getBarBotContainer[counter].SetAmount(x);
+			tempBarBotContainer[counter].SetAmount(x);
 			counter++;
 		}
 	}
@@ -238,25 +265,28 @@ void UpdateIngridients() {
 	Serial.println(ingridientsAmount);
 
 	// 3. Updatera BarBotContainer[i].SetName
-	
-	getBarBotContainer[ingridientsPos].SetName(ingridientsName);
-	getBarBotContainer[ingridientsPos].SetAmount(ingridientsAmount);
+
+	tempBarBotContainer[ingridientsPos].SetName(ingridientsName);
+	tempBarBotContainer[ingridientsPos].SetAmount(ingridientsAmount);
 
 	// 4. Spara värdet
 	SaveData();
-	
+
 }
 
-void GetDrinkOrder() {
+void ValidateDrinkOrder() {
 
 	// 1. Ta emot ett meddelande
 	delay(100);
+
 	String recivedMessage = "none";
-	recivedMessage = Communication.ReadIncomingMessage();
-	Serial.println("Recived orderdrink: "+recivedMessage);
+
+	// recivedMessage = Communication.ReadIncomingMessage();
+	recivedMessage = "$3;3;2;2;1;4;4;3;5;4;6;3;@";
+	Serial.println("Recived orderdrink: " + recivedMessage);
 
 
-		// Trim message
+	// Trim message
 
 	const char *split = ";";
 
@@ -279,7 +309,7 @@ void GetDrinkOrder() {
 	}
 
 
-		// Split message
+	// Split message
 
 	countIngridients = countIngridients / 2;
 	//Serial.print("countIngridients:");
@@ -327,7 +357,8 @@ void GetDrinkOrder() {
 
 
 	// 4. Validate that there is enough liquid, 
-	//    answer back OK 1, NOT 0
+	//    answer OK if true
+
 	bool canProduce = true;
 	for (size_t i = 0; i < countIngridients; i++)
 	{
@@ -335,7 +366,7 @@ void GetDrinkOrder() {
 			Serial.print("\n ORDER\nIndex :");
 			Serial.print(drinkOrder[i].bottleIndex);
 			Serial.print("  Amount :");
-			Serial.println(drinkOrder[i].amount);
+			Serial.print(drinkOrder[i].amount);
 
 			Serial.print(barBotContainer[drinkOrder[i].bottleIndex].GetName() + "  ");
 			Serial.println(barBotContainer[drinkOrder[i].bottleIndex].GetAmount());
@@ -350,22 +381,36 @@ void GetDrinkOrder() {
 		Serial1.println("OK");
 		Serial.println("OK");
 	}
+	else
+	{
+		return;
+	}
 
 	// 5. Send drink to machine
 	ProduceDrinkOrder(drinkOrder, countIngridients);
-
 }
 
 void ProduceDrinkOrder(DrinkOrderClass drinkOrder[], int countIngridients) {
 
 	Serial.println("\n\nProduce:\n");
-	for (size_t i = 0; i < 6; i++)
+	for (size_t i = 0; i < countIngridients; i++)
 	{
+		// Serial print
 		Serial.print(" Index :");
 		Serial.print(drinkOrder[i].bottleIndex);
 		Serial.print("  Amount :");
 		Serial.println(drinkOrder[i].amount);
+
+		// 1. Send drinkorder to liquidPump
+		drinkMixer.RunDrinkOrder(drinkOrder[i].amount, drinkOrder[i].bottleIndex);
+
+		// 2. Calculate new amount 
+		int bottleLiquidAmount = barBotContainer[drinkOrder[i].bottleIndex].GetAmount();
+		barBotContainer[drinkOrder[i].bottleIndex].SetAmount(bottleLiquidAmount - drinkOrder[i].amount);
 	}
+
+	// 3. Save new liquid amount
+	SaveData();
 
 	// TODO: 6. Send conformation when the drink is ready?
 }
