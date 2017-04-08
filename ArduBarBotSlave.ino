@@ -1,4 +1,4 @@
-#include "NeoPixelHandler.h"
+	#include "NeoPixelHandler.h"
 #include "DrinkMixer.h"
 #include <Adafruit_NeoPixel.h>
 #include "DrinkOrder.h"
@@ -8,8 +8,7 @@
 #include "Communication.h"
 #include "Ingridients.h"
 
-
-#pragma region PinOut
+	#pragma region PinOut
 
 // Pinout
 #define ledNeoPixel 10
@@ -22,27 +21,19 @@
 #define bottle5 6
 #define bottle6 7
 #define NUMstrip 16
-#pragma endregion
+#pragma endregion		
 
-
-
-// When we setup the NeoPixel library, we tell it how many strip, and which pin to use to send signals.
-// Note that for older NeoPixel strips you might need to change the third parameter--see the strandtest
-// example for more information on possible values.
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUMstrip, ledNeoPixel, NEO_GRB + NEO_KHZ800);
-
-const int delayval = 500; // delay for half a second
-
-
-#pragma region Variables
+	#pragma region Variables
 
 
 // Variables
-String readString;
 unsigned long timerRecive;
 
+#pragma endregion
 
+	#pragma region Class declaration
 
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUMstrip, ledNeoPixel, NEO_GRB + NEO_KHZ800);
 
 // Class declaration
 struct SaveContainer {  // Formatting table for saving BarBotContainer
@@ -80,18 +71,24 @@ void setup()
 	// Initiate classes
 
 	//SetMockDATA();
+
 	neoPixelHandler.Init(strip);
 
 	drinkMixer.init(airPump, motor, bottle1, bottle2, bottle3, bottle4, bottle5, bottle6);
 
+	//drinkMixer.SetLiquidToStartPos();
+
+	strip.begin();
+
 	SaveData();
+
 	GetSavedData();
 }
 
 void loop()
 {
-	//neoPixelHandler.NeoPixelRainBow(200);
-
+	neoPixelHandler.NeoPixelRainBow(200);
+	
 	//// Read Saved Data
 	//Serial.print("\n\nConverted: \n");
 	//for (size_t i = 0; i < 6; i++)
@@ -101,20 +98,15 @@ void loop()
 	//	Serial.println(tempBarBotContainer[i].GetAmount());
 	//	delay(150);
 	//} 
-
-	Serial.println("Got a cocktail command");
-	ValidateDrinkOrder();
-
-
+	/*Serial.println("Got a cocktail command");
+	ValidateDrinkOrder();*/
 
 	if (Serial1.available())
 	{
 		int msg = Serial1.read();
-
-
 		Serial.print("\n\nCommand recived: ");
 		Serial.println(msg);
-		msg = 'f';
+
 		switch (msg)
 		{
 		case 'e':
@@ -142,147 +134,17 @@ void loop()
 			break;
 		}
 	}
-
-
 }
 
 
-#pragma region Save functions
-
-
-// Save Functions
-void SaveData() {
-
-	#pragma region SetMock
-
-
-		barBotContainer[0].SetName("Margaritas");
-		barBotContainer[1].SetName("Vodka");
-		barBotContainer[2].SetName("Tequila");
-		barBotContainer[3].SetName("Whiskey");
-		barBotContainer[4].SetName("Braunstein Gylden");
-		barBotContainer[5].SetName("Ekologiska Osterlensnapsar");
-
-		for (short i = 0; i < 6; i++)
-		{
-			barBotContainer[i].SetAmount(random(100, 2500));
-		}
-
-	#pragma endregion
-
-
-#pragma region Save Mechanism
-
-
-	// 1. Convert to String
-	SaveContainer varSave{
-		"CorruptMockupData",
-		"CorruptMockupData",
-		barBotContainer[0].GetName(),
-		String(barBotContainer[0].GetAmount()),
-		barBotContainer[1].GetName(),
-		String(barBotContainer[1].GetAmount()),
-		barBotContainer[2].GetName(),
-		String(barBotContainer[2].GetAmount()),
-		barBotContainer[3].GetName(),
-		String(barBotContainer[3].GetAmount()),
-		barBotContainer[4].GetName(),
-		String(barBotContainer[4].GetAmount()),
-		barBotContainer[5].GetName(),
-		String(barBotContainer[5].GetAmount())
-	};
-
-	// 2. Save
-	byte b2[sizeof(varSave)]; // create byte array to store the struct
-	memcpy(b2, &varSave, sizeof(varSave)); // copy the struct to the byte array
-	EEProm.write(4, b2, sizeof(varSave)); // write byte array to flash at address 4
-#pragma endregion
-
-}
-void GetSavedData() {
-
-#pragma region Load Mechanism
-
-
-	// 3. Load from flash memory
-	byte* b = EEProm.readAddress(4); // byte array which is read from flash at adress 4
-	getSave;
-	memcpy(&getSave, b, sizeof(SaveContainer)); // copy byte array to temporary struct
-
-
-
-
-	// 4. Format saved data
-	int counter = 0;
-
-	for (size_t i = 2; i < 14; i++)
-	{
-		if (i % 2 == 0)
-		{
-			tempBarBotContainer[counter].SetName(getSave.Bottle[i]);
-		}
-		else
-		{
-			long x = getSave.Bottle[i].toInt();
-			tempBarBotContainer[counter].SetAmount(x);
-			counter++;
-		}
-	}
-#pragma endregion
-}
-#pragma endregion
-
-
-void UpdateIngridients() {
-
-
-	// recive ingridient
-	timerRecive = millis();
-	delay(100);
-	String recivedMessage = "none";
-	//do
-	//{
-	//} while ((millis() - timerRecive) > 150);
-
-
-	// 1. Ta emot nya flaskan
-	recivedMessage = Communication.ReadIncomingMessage();
-	Serial.println(recivedMessage);
-
-	// 2. Deserialize meddalandet, ta ut Position, Namn, Amount
-	const char charBeginDelimiter = Communication.splitCharIndex[0]; // '$'
-	const char charNameDelimiter = Communication.splitCharName[0];   // '#'
-	const char charAmountDelimiter = Communication.splitCharAmount[0]; // '&'
-	const char charEndDelimiter = Communication.splitEnd[0]; // '@'
-
-
-	int ingridientsPos = recivedMessage.substring(recivedMessage.indexOf(charBeginDelimiter) + 1, recivedMessage.indexOf(charNameDelimiter)).toInt();
-	String ingridientsName = recivedMessage.substring(recivedMessage.indexOf(charNameDelimiter) + 1, recivedMessage.indexOf(charAmountDelimiter));
-	int ingridientsAmount = recivedMessage.substring(recivedMessage.indexOf(charAmountDelimiter) + 1, recivedMessage.indexOf(charEndDelimiter)).toInt();
-
-	Serial.println(ingridientsPos);
-	Serial.println(ingridientsName);
-	Serial.println(ingridientsAmount);
-
-	// 3. Updatera BarBotContainer[i].SetName
-
-	tempBarBotContainer[ingridientsPos].SetName(ingridientsName);
-	tempBarBotContainer[ingridientsPos].SetAmount(ingridientsAmount);
-
-	// 4. Spara värdet
-	SaveData();
-
-}
+	#pragma region Produce cocktail order
 
 void ValidateDrinkOrder() {
 
 	// 1. Ta emot ett meddelande
 	delay(100);
-
 	String recivedMessage = "none";
-
-	// recivedMessage = Communication.ReadIncomingMessage();
-	recivedMessage = "$3;3;2;2;1;4;4;3;5;4;6;3;@";
+	recivedMessage = Communication.ReadIncomingMessage();
 	Serial.println("Recived orderdrink: " + recivedMessage);
 
 
@@ -409,11 +271,144 @@ void ProduceDrinkOrder(DrinkOrderClass drinkOrder[], int countIngridients) {
 		barBotContainer[drinkOrder[i].bottleIndex].SetAmount(bottleLiquidAmount - drinkOrder[i].amount);
 	}
 
-	// 3. Save new liquid amount
+	// 4. Flush center tube
+	drinkMixer.CleanCenterTube();
+
+	// 5. Update with the new liquid amount
 	SaveData();
 
 	// TODO: 6. Send conformation when the drink is ready?
 }
 
+#pragma endregion
 
+	#pragma region Update bottles
+
+void UpdateIngridients() {
+
+
+	// recive ingridient
+	timerRecive = millis();
+	delay(100);
+	String recivedMessage = "none";
+	//do
+	//{
+	//} while ((millis() - timerRecive) > 150);
+
+
+	// 1. Ta emot nya flaskan
+	recivedMessage = Communication.ReadIncomingMessage();
+	Serial.println(recivedMessage);
+
+	// 2. Deserialize meddalandet, ta ut Position, Namn, Amount
+	const char charBeginDelimiter = Communication.splitCharIndex[0]; // '$'
+	const char charNameDelimiter = Communication.splitCharName[0];   // '#'
+	const char charAmountDelimiter = Communication.splitCharAmount[0]; // '&'
+	const char charEndDelimiter = Communication.splitEnd[0]; // '@'
+
+
+	int ingridientsPos = recivedMessage.substring(recivedMessage.indexOf(charBeginDelimiter) + 1, recivedMessage.indexOf(charNameDelimiter)).toInt();
+	String ingridientsName = recivedMessage.substring(recivedMessage.indexOf(charNameDelimiter) + 1, recivedMessage.indexOf(charAmountDelimiter));
+	int ingridientsAmount = recivedMessage.substring(recivedMessage.indexOf(charAmountDelimiter) + 1, recivedMessage.indexOf(charEndDelimiter)).toInt();
+
+	Serial.println(ingridientsPos);
+	Serial.println(ingridientsName);
+	Serial.println(ingridientsAmount);
+
+	// 3. Updatera BarBotContainer[i].SetName
+
+	tempBarBotContainer[ingridientsPos].SetName(ingridientsName);
+	tempBarBotContainer[ingridientsPos].SetAmount(ingridientsAmount);
+
+	// 4. Spara värdet
+	SaveData();
+
+}
+
+#pragma endregion
+
+	
+
+#pragma region Save functions
+// Save Functions
+void SaveData() {
+
+	#pragma region SetMock
+
+
+		barBotContainer[0].SetName("Margaritas");
+		barBotContainer[1].SetName("Vodka");
+		barBotContainer[2].SetName("Tequila");
+		barBotContainer[3].SetName("Whiskey");
+		barBotContainer[4].SetName("Braunstein Gylden");
+		barBotContainer[5].SetName("Ekologiska Osterlensnapsar");
+
+		for (short i = 0; i < 6; i++)
+		{
+			barBotContainer[i].SetAmount(random(100, 2500));
+		}
+
+	#pragma endregion
+
+
+#pragma region Save Mechanism
+
+
+	// 1. Convert to String
+	SaveContainer varSave{
+		"CorruptMockupData",
+		"CorruptMockupData",
+		barBotContainer[0].GetName(),
+		String(barBotContainer[0].GetAmount()),
+		barBotContainer[1].GetName(),
+		String(barBotContainer[1].GetAmount()),
+		barBotContainer[2].GetName(),
+		String(barBotContainer[2].GetAmount()),
+		barBotContainer[3].GetName(),
+		String(barBotContainer[3].GetAmount()),
+		barBotContainer[4].GetName(),
+		String(barBotContainer[4].GetAmount()),
+		barBotContainer[5].GetName(),
+		String(barBotContainer[5].GetAmount())
+	};
+
+	// 2. Save
+	byte b2[sizeof(varSave)]; // create byte array to store the struct
+	memcpy(b2, &varSave, sizeof(varSave)); // copy the struct to the byte array
+	EEProm.write(4, b2, sizeof(varSave)); // write byte array to flash at address 4
+#pragma endregion
+
+}
+void GetSavedData() {
+
+#pragma region Load Mechanism
+
+
+	// 3. Load from flash memory
+	byte* b = EEProm.readAddress(4); // byte array which is read from flash at adress 4
+	getSave;
+	memcpy(&getSave, b, sizeof(SaveContainer)); // copy byte array to temporary struct
+
+
+
+
+	// 4. Format saved data
+	int counter = 0;
+
+	for (size_t i = 2; i < 14; i++)
+	{
+		if (i % 2 == 0)
+		{
+			tempBarBotContainer[counter].SetName(getSave.Bottle[i]);
+		}
+		else
+		{
+			long x = getSave.Bottle[i].toInt();
+			tempBarBotContainer[counter].SetAmount(x);
+			counter++;
+		}
+	}
+#pragma endregion
+}
+#pragma endregion
 
