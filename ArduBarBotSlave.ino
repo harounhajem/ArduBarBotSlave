@@ -33,7 +33,7 @@ unsigned long timerRecive;
 
 	#pragma region Class declaration
 
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUMstrip, ledNeoPixel, NEO_GRB + NEO_KHZ800);
+//Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUMstrip, ledNeoPixel, NEO_GRB + NEO_KHZ800);
 
 // Class declaration
 struct SaveContainer {  // Formatting table for saving BarBotContainer
@@ -64,21 +64,23 @@ void setup()
 	pinMode(bottle5, OUTPUT);
 	pinMode(bottle6, OUTPUT);
 
-	Serial1.begin(230400);
 	Serial.begin(115200);
+	Serial1.begin(230400);
 
 
 	// Initiate classes
 
 	//SetMockDATA();
 
-	neoPixelHandler.Init(strip);
+	btCommunication.init();
+
+	//neoPixelHandler.Init(strip);
+	//strip.begin();
 
 	drinkMixer.init(airPump, motor, bottle1, bottle2, bottle3, bottle4, bottle5, bottle6);
 
 	//drinkMixer.SetLiquidToStartPos();
 
-	strip.begin();
 
 	SaveData();
 
@@ -87,7 +89,7 @@ void setup()
 
 void loop()
 {
-	neoPixelHandler.NeoPixelRainBow(200);
+	//neoPixelHandler.NeoPixelRainBow(200);
 	
 	//// Read Saved Data
 	//Serial.print("\n\nConverted: \n");
@@ -144,7 +146,7 @@ void ValidateDrinkOrder() {
 	// 1. Ta emot ett meddelande
 	delay(100);
 	String recivedMessage = "none";
-	recivedMessage = Communication.ReadIncomingMessage();
+	recivedMessage = btCommunication.ReadIncomingMessage();
 	Serial.println("Recived orderdrink: " + recivedMessage);
 
 
@@ -245,6 +247,7 @@ void ValidateDrinkOrder() {
 	}
 	else
 	{
+		Serial.println("NOT OK");
 		return;
 	}
 

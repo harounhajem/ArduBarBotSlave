@@ -49,7 +49,7 @@ void CommunicationClass::SendIngridients(Container containers[6])
 				return;
 			}
 
-		} while (!ReadIncomingMessageWithChecksum(sendMessage));
+		} while (!ReadIncomingMessage_Compare(sendMessage));
 
 		Serial1.read();
 		Serial.read();
@@ -63,7 +63,7 @@ String CommunicationClass::ReadIncomingMessage() {
 
 	while (Serial1.available() > 0 && newData == false) {
 		rc = Serial1.read();
-
+		Serial.println(rc);
 		if (recvInProgress == true) {
 			if (rc != splitEnd[0]) {
 				receivedChars[ndx] = rc;
@@ -96,9 +96,11 @@ String CommunicationClass::ReadIncomingMessage() {
 		return tempString;
 	}
 
+	return "empty";
+
 }
 String tempMessage;
-bool CommunicationClass::ReadIncomingMessageWithChecksum(String checkSum)
+bool CommunicationClass::ReadIncomingMessage_Compare(String checkSum)
 {
 
 	while (Serial1.available() > 0 && newData == false) {

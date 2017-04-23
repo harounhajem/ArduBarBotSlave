@@ -17,7 +17,7 @@ protected:
 public:
 	void init();
 	void SendIngridients(Container containers[6]);
-	bool ReadIncomingMessageWithChecksum(String sentMessage);
+	bool ReadIncomingMessage_Compare(String sentMessage);
 	String ReadIncomingMessage();
 	String
 		splitCharIndex = "$",
