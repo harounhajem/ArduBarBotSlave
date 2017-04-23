@@ -149,7 +149,7 @@ void ValidateDrinkOrder() {
 	recivedMessage = btCommunication.ReadIncomingMessage();
 	Serial.println("Recived orderdrink: " + recivedMessage);
 
-
+	Communication.init();
 	// Trim message
 
 	const char *split = ";";
