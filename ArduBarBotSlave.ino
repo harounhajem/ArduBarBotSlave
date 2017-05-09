@@ -289,6 +289,7 @@ void ProduceDrinkOrder(DrinkOrderClass drinkOrder[], int countIngridients) {
 
 void UpdateIngridients() {
 
+	Serial.println("Begin updating");
 
 	// recive ingridient
 	timerRecive = millis();
@@ -301,6 +302,7 @@ void UpdateIngridients() {
 
 	// 1. Ta emot nya flaskan
 	recivedMessage = Communication.ReadIncomingMessage();
+	Serial.print("Recived msg to save: ");
 	Serial.println(recivedMessage);
 
 	// 2. Deserialize meddalandet, ta ut Position, Namn, Amount
@@ -314,6 +316,7 @@ void UpdateIngridients() {
 	String ingridientsName = recivedMessage.substring(recivedMessage.indexOf(charNameDelimiter) + 1, recivedMessage.indexOf(charAmountDelimiter));
 	int ingridientsAmount = recivedMessage.substring(recivedMessage.indexOf(charAmountDelimiter) + 1, recivedMessage.indexOf(charEndDelimiter)).toInt();
 
+	Serial.println("MSG parsed: ");
 	Serial.println(ingridientsPos);
 	Serial.println(ingridientsName);
 	Serial.println(ingridientsAmount);
@@ -325,6 +328,7 @@ void UpdateIngridients() {
 
 	// 4. Spara värdet
 	SaveData();
+	Serial.println("Updated new ingridients");
 
 }
 
@@ -339,7 +343,7 @@ void SaveData() {
 	#pragma region SetMock
 
 
-		barBotContainer[0].SetName("Margaritas");
+		barBotContainer[0].SetName("Lime");
 		barBotContainer[1].SetName("Vodka");
 		barBotContainer[2].SetName("Tequila");
 		barBotContainer[3].SetName("Whiskey");
