@@ -27,7 +27,7 @@
 
 
 // Variables
-unsigned long timerRecive;
+unsigned long timerRecive, timerTimeOut;
 
 #pragma endregion
 
@@ -103,7 +103,7 @@ void loop()
 	/*Serial.println("Got a cocktail command");
 	ValidateDrinkOrder();*/
 
-	if (Serial1.available())
+	if (Serial1.available() && (millis() - timerTimeOut > 650UL))
 	{
 		int msg = Serial1.read();
 		Serial.print("\n\nCommand recived: ");
@@ -132,7 +132,8 @@ void loop()
 		default:
 			Serial.print("Unkown command sent: ");
 			Serial.println(msg);
-			Serial1.read();
+			Serial1.flush();
+			timerTimeOut = millis();
 			break;
 		}
 	}
