@@ -11,11 +11,21 @@ void SDCardHandlerClass::BeginSD() {
 	}
 	Serial.print("Initializing SD card...");
 
-	if (!SD.begin(53)) {
-		Serial.println("initialization failed!");
-		return;
-	}
-	Serial.println("initialization done.");
+	bool contected = false;
+	do
+	{
+		if (!SD.begin(53)) {
+			Serial.println("initialization failed!");
+			
+		}
+		else
+		{
+			Serial.println("initialization done.");
+			contected = true;
+
+		}
+
+	} while (!contected);
 
 }
 
@@ -118,7 +128,7 @@ void SDCardHandlerClass::Load(Container *containers)
 
 
 
-	Serial.print("\n\nLoading from SD");
+	Serial.println("\n\nLoading from SD");
 
 	/////
 	///// Cutting
@@ -137,25 +147,32 @@ void SDCardHandlerClass::Load(Container *containers)
 
 		// Print the type of delimiter.
 		if (str[n - 1] == ',' || str[n - 1] == '\n') {
-			Serial.print(str[n - 1] == ',' ? F("Name: ") : F("Amount:  "));
+			Serial.print(str[n - 1] == ',' ? F("Name:   ") : F("Amount: "));
+			
 
 			if (str[n - 1] == ',')
 			{
-				containers[pos].SetName(String(str));
-				Serial.print("Load: ");
+				//st = myString.substr(0, myString.size() - 1);
+				// Trimmed string
+				String st;
+				st = String(str);
+				st = st.substring(0, st.length() - 1);
+
+				containers[pos].SetName(st);
 				Serial.println(containers[pos].GetName());
 			}
 			else if (str[n - 1] == '\n')
 			{
 				String number = str;
 				containers[pos].SetAmount(number.toInt());
-				Serial.print("Load: ");
 				Serial.println(containers[pos].GetAmount());
 				pos++;
-
 			}
+				if (pos >= 6)
+				{
+					break;
+				}
 			// Remove the delimiter.
-			str[n - 1] = 0;
 			continue;
 		}
 		else {
@@ -166,8 +183,10 @@ void SDCardHandlerClass::Load(Container *containers)
 		Serial.print("Couldn't parse and load: ");
 		Serial.println(str);
 	}
+
 	myFile.close();
 
+	Serial.println("------------\nDone loading");
 
 }
 

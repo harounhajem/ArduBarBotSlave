@@ -70,6 +70,8 @@ void setup()
 
 	// Initiate classes
 
+	digitalWrite(SD_SPI, LOW);
+
 	SDHandler.BeginSD();
 	btCommunication.init();
 	drinkMixer.init(airPump, motor, bottle1, bottle2, bottle3, bottle4, bottle5, bottle6);
@@ -79,7 +81,7 @@ void setup()
 	//drinkMixer.SetLiquidToStartPos();
 	SDHandler.Load(barBotContainer);
 	//// Read Saved Data
-	Serial.print("\n\Loaded from SD: \n");
+	Serial.print("\n\Loaded into container object: \n");
 	for (size_t i = 0; i < 6; i++)
 	{
 		Serial.print(barBotContainer[i].GetName());
@@ -95,7 +97,7 @@ void loop()
 	/*Serial.println("Got a cocktail command");
 	ValidateDrinkOrder();*/
 
-	if (Serial1.available() && (millis() - timerTimeOut > 650UL))
+	if (Serial1.available() && (millis() - timerTimeOut > 1000UL))
 	{
 		int msg = Serial1.read();
 		Serial.print("\n\nCommand recived: ");
@@ -123,8 +125,9 @@ void loop()
 
 		default:
 			Serial.print("Unkown command sent: ");
-			Serial.println(msg);
-			Serial1.flush();
+			Serial.println((char)msg);
+			//Serial1.flush();
+			int s = Serial1.read();
 			timerTimeOut = millis();
 			break;
 		}
@@ -236,11 +239,11 @@ void ValidateDrinkOrder() {
 	if (canProduce)
 	{
 		Serial1.println("OK");
-		Serial.println("OK");
+		Serial.println("Produce: OK");
 	}
 	else
 	{
-		Serial.println("NOT OK");
+		Serial.println("Produce: NOT OK");
 		return;
 	}
 
