@@ -9,24 +9,24 @@
       <VCCodeMacros />
     </VCCodeModel>
     <BreakPoints>
-      <BreakPoint Index="1" Name="ArduBarBotSlave.ino, line 97" Id="2b76a879-ad4f-4b3c-af99-ff5a8a294b06" Enabled="0" Message="  Millis is currently {millis()}.&#xD;&#xA;    This tutorial debug trace point prints a message every 250ms&#xD;&#xA;    The break point property called 'Continue Execution' controls if code should pause here and wait for you to click 'Continue'.&#xD;&#xA;    To stop debug, click stop debugging or close/stop the serial monitor.&#xD;&#xA;    When debug ends, serial debug will continue to break/pause the mcu or transmit trace message, wifi debug will not.&#xD;&#xA;    This breakpoint exists at the start of the loop() function, where you see a red dot.&#xD;&#xA;    The red dot is a ‘breakpoint’. Edit the properties of a breakpoint by right clicking it or open the 'Debug&gt;Other Windows&gt;Breakpoint List'&#xD;&#xA;    This breakpoint is automatically set by Visual Micro to demonstrate the Arduino debugger.&#xD;&#xA;    Add your own breakpoints by placing the cursor on any code line and pressing F9. Press F9 again to delete the breakpoint.&#xD;&#xA;    Read more about the Visual Micro debugger at http://www.visualmicro.com/page/Debugging-for-Arduino.aspx&#xD;&#xA;    Take some time to learn about debugging, it’s worth it!&#xD;&#xA;    To switch the demo breakpoint and other tips off, deselect Visual Micro&gt;Tutorial Mode.&#xD;&#xA;    Switch debugging off by changing from tool bar (Configuratin) from 'Debug' to 'Release'" MessageTextType="0" PreProcessedMessage="  Millis is currently {0}.&#xD;&#xA;    This tutorial debug trace point prints a message every 250ms&#xD;&#xA;    The break point property called 'Continue Execution' controls if code should pause here and wait for you to click 'Continue'.&#xD;&#xA;    To stop debug, click stop debugging or close/stop the serial monitor.&#xD;&#xA;    When debug ends, serial debug will continue to break/pause the mcu or transmit trace message, wifi debug will not.&#xD;&#xA;    This breakpoint exists at the start of the loop() function, where you see a red dot.&#xD;&#xA;    The red dot is a ‘breakpoint’. Edit the properties of a breakpoint by right clicking it or open the 'Debug&gt;Other Windows&gt;Breakpoint List'&#xD;&#xA;    This breakpoint is automatically set by Visual Micro to demonstrate the Arduino debugger.&#xD;&#xA;    Add your own breakpoints by placing the cursor on any code line and pressing F9. Press F9 again to delete the breakpoint.&#xD;&#xA;    Read more about the Visual Micro debugger at http://www.visualmicro.com/page/Debugging-for-Arduino.aspx&#xD;&#xA;    Take some time to learn about debugging, it’s worth it!&#xD;&#xA;    To switch the demo breakpoint and other tips off, deselect Visual Micro&gt;Tutorial Mode.&#xD;&#xA;    Switch debugging off by changing from tool bar (Configuratin) from 'Debug' to 'Release'" Condition="millis()&gt;0 || millis()&gt;1" ConditionType="1" CurrentHits="0" File="c:\users\harou\onedrive\examensarbetet\arduino\ardubarbotslave\ardubarbotslave.ino" FileLine="97" FileColumn="1" FunctionName="" FunctionLineOffset="1" FunctionColumnOffset="1" HitCountTarget="250" HitCountType="4" Language="C++" LocationType="3" Tag="&lt;vmbp Id='2b76a879-ad4f-4b3c-af99-ff5a8a294b06'/&gt;" Type="1" ToString="System.__ComObject" BreakWhenHit="0">
-        <Source>90		{
-91			Serial.print(barBotContainer[i].GetName());
-92			Serial.print("  ");
-93			Serial.println(barBotContainer[i].GetAmount());
-94		}
-95	}
-96	
---&gt;97	void loop()
-98	{
+      <BreakPoint Index="1" Name="ArduBarBotSlave.ino, line 96" Id="2b76a879-ad4f-4b3c-af99-ff5a8a294b06" Enabled="0" Message="  Millis is currently {millis()}.&#xD;&#xA;    This tutorial debug trace point prints a message every 250ms&#xD;&#xA;    The break point property called 'Continue Execution' controls if code should pause here and wait for you to click 'Continue'.&#xD;&#xA;    To stop debug, click stop debugging or close/stop the serial monitor.&#xD;&#xA;    When debug ends, serial debug will continue to break/pause the mcu or transmit trace message, wifi debug will not.&#xD;&#xA;    This breakpoint exists at the start of the loop() function, where you see a red dot.&#xD;&#xA;    The red dot is a ‘breakpoint’. Edit the properties of a breakpoint by right clicking it or open the 'Debug&gt;Other Windows&gt;Breakpoint List'&#xD;&#xA;    This breakpoint is automatically set by Visual Micro to demonstrate the Arduino debugger.&#xD;&#xA;    Add your own breakpoints by placing the cursor on any code line and pressing F9. Press F9 again to delete the breakpoint.&#xD;&#xA;    Read more about the Visual Micro debugger at http://www.visualmicro.com/page/Debugging-for-Arduino.aspx&#xD;&#xA;    Take some time to learn about debugging, it’s worth it!&#xD;&#xA;    To switch the demo breakpoint and other tips off, deselect Visual Micro&gt;Tutorial Mode.&#xD;&#xA;    Switch debugging off by changing from tool bar (Configuratin) from 'Debug' to 'Release'" MessageTextType="0" PreProcessedMessage="  Millis is currently {0}.&#xD;&#xA;    This tutorial debug trace point prints a message every 250ms&#xD;&#xA;    The break point property called 'Continue Execution' controls if code should pause here and wait for you to click 'Continue'.&#xD;&#xA;    To stop debug, click stop debugging or close/stop the serial monitor.&#xD;&#xA;    When debug ends, serial debug will continue to break/pause the mcu or transmit trace message, wifi debug will not.&#xD;&#xA;    This breakpoint exists at the start of the loop() function, where you see a red dot.&#xD;&#xA;    The red dot is a ‘breakpoint’. Edit the properties of a breakpoint by right clicking it or open the 'Debug&gt;Other Windows&gt;Breakpoint List'&#xD;&#xA;    This breakpoint is automatically set by Visual Micro to demonstrate the Arduino debugger.&#xD;&#xA;    Add your own breakpoints by placing the cursor on any code line and pressing F9. Press F9 again to delete the breakpoint.&#xD;&#xA;    Read more about the Visual Micro debugger at http://www.visualmicro.com/page/Debugging-for-Arduino.aspx&#xD;&#xA;    Take some time to learn about debugging, it’s worth it!&#xD;&#xA;    To switch the demo breakpoint and other tips off, deselect Visual Micro&gt;Tutorial Mode.&#xD;&#xA;    Switch debugging off by changing from tool bar (Configuratin) from 'Debug' to 'Release'" Condition="millis()&gt;0 || millis()&gt;1" ConditionType="1" CurrentHits="0" File="c:\users\harou\onedrive\examensarbetet\arduino\ardubarbotslave\ardubarbotslave.ino" FileLine="96" FileColumn="1" FunctionName="" FunctionLineOffset="1" FunctionColumnOffset="1" HitCountTarget="250" HitCountType="4" Language="C++" LocationType="3" Tag="&lt;vmbp Id='2b76a879-ad4f-4b3c-af99-ff5a8a294b06'/&gt;" Type="1" ToString="System.__ComObject" BreakWhenHit="0">
+        <Source>89		{
+90			Serial.print(barBotContainer[i].GetName());
+91			Serial.print("  ");
+92			Serial.println(barBotContainer[i].GetAmount());
+93		}
+94	}
+95	
+--&gt;96	void loop()
+97	{
+98	
 99	
-100	
-101		//neoPixelHandler.NeoPixelRainBow(200);
-102	
-103		/*Serial.println("Got a cocktail command");
-104		ValidateDrinkOrder();*/
-105	
-106		if (Serial1.available() &amp;&amp; (millis() - timerTimeOut &gt; 1000UL))
+100		//neoPixelHandler.NeoPixelRainBow(200);
+101	
+102		/*Serial.println("Got a cocktail command");
+103		ValidateDrinkOrder();*/
+104	
+105		if (Serial1.available() &amp;&amp; (millis() - timerTimeOut &gt; 1000UL))
 </Source>
         <MessageVariables>
           <MessageVariable Name="millis()" Index="1" />
@@ -78,24 +78,24 @@
           <MessageVariable Name="&quot;Command Sending&quot;" Index="1" />
         </MessageVariables>
       </BreakPoint>
-      <BreakPoint Index="4" Name="ArduBarBotSlave.ino, line 60" Id="59be97de-0d5d-4824-99fd-da8e6f295d2e" Enabled="0" Message="" MessageTextType="2" PreProcessedMessage="" Condition="" ConditionType="1" CurrentHits="0" File="c:\users\harou\onedrive\examensarbetet\arduino\ardubarbotslave\ardubarbotslave.ino" FileLine="60" FileColumn="1" FunctionName="setup()" FunctionLineOffset="5" FunctionColumnOffset="1" HitCountTarget="1" HitCountType="1" Language="C++" LocationType="3" Tag="&lt;vmbp Id='59be97de-0d5d-4824-99fd-da8e6f295d2e'/&gt;" Type="1" ToString="System.__ComObject" BreakWhenHit="1">
-        <Source>53	#pragma endregion
+      <BreakPoint Index="4" Name="ArduBarBotSlave.ino, line 57" Id="59be97de-0d5d-4824-99fd-da8e6f295d2e" Enabled="0" Message="" MessageTextType="2" PreProcessedMessage="" Condition="" ConditionType="1" CurrentHits="0" File="c:\users\harou\onedrive\examensarbetet\arduino\ardubarbotslave\ardubarbotslave.ino" FileLine="57" FileColumn="1" FunctionName="setup()" FunctionLineOffset="5" FunctionColumnOffset="1" HitCountTarget="1" HitCountType="1" Language="C++" LocationType="3" Tag="&lt;vmbp Id='59be97de-0d5d-4824-99fd-da8e6f295d2e'/&gt;" Type="1" ToString="System.__ComObject" BreakWhenHit="1">
+        <Source>50	#pragma endregion
+51	
+52	void setup()
+53	{
 54	
-55	void setup()
-56	{
-57	
-58		pinMode(airPump, OUTPUT);
-59		pinMode(motor, OUTPUT);
---&gt;60		pinMode(bottle1, OUTPUT);
-61		pinMode(bottle2, OUTPUT);
-62		pinMode(bottle3, OUTPUT);
-63		pinMode(bottle4, OUTPUT);
-64		pinMode(bottle5, OUTPUT);
-65		pinMode(bottle6, OUTPUT);
-66		pinMode(SD_SPI, OUTPUT);
-67	
-68		Serial.begin(115200);
-69		Serial1.begin(230400);
+55		pinMode(airPump, OUTPUT);
+56		pinMode(motor, OUTPUT);
+--&gt;57		pinMode(bottle1, OUTPUT);
+58		pinMode(bottle2, OUTPUT);
+59		pinMode(bottle3, OUTPUT);
+60		pinMode(bottle4, OUTPUT);
+61		pinMode(bottle5, OUTPUT);
+62		pinMode(bottle6, OUTPUT);
+63		pinMode(SD_SPI, OUTPUT);
+64	
+65		Serial.begin(115200);
+66		Serial1.begin(230400);
 </Source>
       </BreakPoint>
       <BreakPoint Index="5" Name="DrinkMixer.cpp, line 108" Id="8f4fd9a5-3fc9-4279-9b48-f016e27854c4" Enabled="0" Message="{_airPump}{_motor}{_bottle1}{_bottle2}{_bottle3}{_bottle4}{_bottle5}{_bottle6}{soleniod[0]}{soleniod[1]} {soleniod[2]}{soleniod[3]}{soleniod[4]}" MessageTextType="2" PreProcessedMessage="{0}{1}{2}{3}{4}{5}{6}{7}{8}{9} {10}{11}{12}" Condition="" ConditionType="1" CurrentHits="0" File="c:\users\harou\onedrive\examensarbetet\arduino\ardubarbotslave\drinkmixer.cpp" FileLine="108" FileColumn="1" FunctionName="init(int tmpairPump, int tmpmotor, int tmpbottle1, int tmpbottle2, int tmpbottle3, int tmpbottle4, int tmpbottle5, int tmpbottle6)" FunctionLineOffset="19" FunctionColumnOffset="1" HitCountTarget="1" HitCountType="1" Language="C++" LocationType="3" Tag="&lt;vmbp Id='8f4fd9a5-3fc9-4279-9b48-f016e27854c4'/&gt;" Type="1" ToString="System.__ComObject" BreakWhenHit="0">

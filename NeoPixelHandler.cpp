@@ -4,7 +4,7 @@
 
 #include "NeoPixelHandler.h"
 
-NeoPixelHandlerClass NeoPixelHandler;
+
 
 void NeoPixelHandlerClass::NeoPixelRainBow(uint8_t wait)
 {
@@ -28,7 +28,7 @@ void NeoPixelHandlerClass::SetColor_DrinkProduce()
 		// pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
 		_strip.setPixelColor(i, _strip.Color(128, 0, 128)); // Moderately bright green color.
 		_strip.show(); // This sends the updated pixel color to the hardware.
-		delay(100);
+		delay(90);
 		
 	}
 
@@ -42,7 +42,7 @@ void NeoPixelHandlerClass::SetColor_Off()
 		_strip.setPixelColor(i, _strip.Color(0, 0, 0)); // Moderately bright green color.
 
 		_strip.show(); // This sends the updated pixel color to the hardware.
-		delay(100);
+		
 
 	}
 }
@@ -61,7 +61,9 @@ uint32_t NeoPixelHandlerClass::Wheel(byte WheelPos)
 	return _strip.Color(WheelPos * 3, 255 - WheelPos * 3, 0, 0);
 }
 
-void NeoPixelHandlerClass::Init(Adafruit_NeoPixel strip)
+
+
+NeoPixelHandlerClass::NeoPixelHandlerClass(Adafruit_NeoPixel &stripy)
 {
-	_strip = strip;
+	_strip = stripy;
 }

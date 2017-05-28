@@ -1,13 +1,12 @@
 #include "SDCardHandler.h"
 #include "NeoPixelHandler.h"
 #include "DrinkMixer.h"
-#include <SD.h>
+//#include <SD.h>
 #include <Adafruit_NeoPixel.h>
 #include "DrinkOrder.h"
 #include "Communication.h"
 #include "Ingridients.h"
 #include <SPI.h>
-#include "SDCardHandler.h"
 
 
 #pragma region PinOut
@@ -39,12 +38,10 @@ unsigned long timerRecive, timerTimeOut;
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUMstrip, ledNeoPixel, NEO_GRB + NEO_KHZ800);
 
 // Class declaration
-struct SaveContainer {  // Formatting table for saving BarBotContainer
-	String Bottle[14];
-};
+
 
 DrinkMixerClass drinkMixer;
-NeoPixelHandlerClass neoPixelHandler;
+NeoPixelHandlerClass neoPixelHandler(strip);
 Container barBotContainer[6];			// Barbot alcohol container
 CommunicationClass btCommunication;		// Bluetooth communication
 
@@ -77,8 +74,10 @@ void setup()
 	drinkMixer.init(airPump, motor, bottle1, bottle2, bottle3, bottle4, bottle5, bottle6);
 
 	//neoPixelHandler.Init(strip);
-	//neoPixelHandler._strip.begin();
-	strip.begin();
+	neoPixelHandler._strip.begin();
+	neoPixelHandler.SetColor_DrinkProduce();
+	neoPixelHandler.SetColor_Off();
+	//strip.begin();
 	//neoPixelHandler.SetColor_Off();
 	//strip.begin();
 
@@ -263,16 +262,17 @@ void ValidateDrinkOrder() {
 }
 
 void ProduceDrinkOrder(DrinkOrderClass drinkOrder[], int countIngridients) {
-	//neoPixelHandler.SetColor_DrinkProduce();
+	
 	Serial.print("LED ON");
-	for (int i = 0; i < strip.numPixels(); i++) {
+	neoPixelHandler.SetColor_DrinkProduce();
+	//for (int i = 0; i < strip.numPixels(); i++) {
 
-		// pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-		strip.setPixelColor(i, strip.Color(128, 0, 128)); // Moderately bright green color.
-		strip.show(); // This sends the updated pixel color to the hardware.
-		delay(100);
+	//	// pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
+	//	strip.setPixelColor(i, strip.Color(128, 0, 128)); // Moderately bright green color.
+	//	strip.show(); // This sends the updated pixel color to the hardware.
+	//	delay(100);
 
-	}
+	//}
 
 
 	Serial.println("\n\nProduce:\n");
@@ -305,17 +305,17 @@ void ProduceDrinkOrder(DrinkOrderClass drinkOrder[], int countIngridients) {
 
 	// TODO: 6. Send conformation when the drink is ready?
 
-	//neoPixelHandler.SetColor_Off();
+	neoPixelHandler.SetColor_Off();
 
 	Serial.print("LED OFF");
-	for (int i = 0; i < strip.numPixels(); i++) {
+	//for (int i = 0; i < strip.numPixels(); i++) {
 
-		// pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-		strip.setPixelColor(i, strip.Color(0, 0, 0)); // Moderately bright green color.
-		strip.show(); // This sends the updated pixel color to the hardware.
-		delay(100);
+	//	// pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
+	//	strip.setPixelColor(i, strip.Color(0, 0, 0)); // Moderately bright green color.
+	//	strip.show(); // This sends the updated pixel color to the hardware.
+	//	delay(100);
 
-	}
+	//}
 
 }
 
