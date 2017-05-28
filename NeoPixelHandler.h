@@ -21,6 +21,12 @@ private:
 
 	uint32_t Wheel(byte WheelPos);
 
+	uint16_t brightness = 255;
+
+	bool colorFade = false;
+
+	long timerFade = 0;
+
 public:
 	Adafruit_NeoPixel _strip; 
 

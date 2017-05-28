@@ -29,7 +29,7 @@
 
 
 // Variables
-unsigned long timerRecive, timerTimeOut;
+unsigned long timerRecive, timerTimeOut, timerLatestOrder;
 
 #pragma endregion
 
@@ -69,20 +69,24 @@ void setup()
 
 	digitalWrite(SD_SPI, LOW);
 
+	// SD begin
 	SDHandler.BeginSD();
+
+	// Bluetooth begin
 	btCommunication.init();
+
+	// Drink mixer machine begin
 	drinkMixer.init(airPump, motor, bottle1, bottle2, bottle3, bottle4, bottle5, bottle6);
 
-	//neoPixelHandler.Init(strip);
+	// Led begin
 	neoPixelHandler._strip.begin();
 	neoPixelHandler.SetColor_DrinkProduce();
-	neoPixelHandler.SetColor_Off();
-	//strip.begin();
-	//neoPixelHandler.SetColor_Off();
-	//strip.begin();
+	
 
-	//drinkMixer.SetLiquidToStartPos();
+	// Set liquid to startPos
+	drinkMixer.SetLiquidToStartPos();
 	SDHandler.Load(barBotContainer);
+
 	//// Read Saved Data
 	Serial.print("\n\Loaded into container object: \n");
 	for (size_t i = 0; i < 6; i++)
@@ -97,10 +101,8 @@ void loop()
 {
 
 
-	//neoPixelHandler.NeoPixelRainBow(200);
+	
 
-	/*Serial.println("Got a cocktail command");
-	ValidateDrinkOrder();*/
 
 	if (Serial1.available() && (millis() - timerTimeOut > 1000UL))
 	{
@@ -140,12 +142,21 @@ void loop()
 			break;
 		}
 	}
+
+	neoPixelHandler.SetColor_Off();
 }
 
 
 #pragma region Produce cocktail order
 
 void ValidateDrinkOrder() {
+
+	// Guard: Stop from double ordering while the glas is full
+	if (millis() - timerLatestOrder < 3500UL)
+	{
+		Serial.println("Order blocked: change glas first");
+		return;
+	}
 
 	// 1. Ta emot ett meddelande
 	delay(100);
@@ -252,6 +263,7 @@ void ValidateDrinkOrder() {
 		Serial1.println("OK");
 		Serial.println("Produce: OK");
 		ProduceDrinkOrder(drinkOrder, countIngridients);
+		timerLatestOrder = millis();
 	}
 	else
 	{
@@ -262,17 +274,9 @@ void ValidateDrinkOrder() {
 }
 
 void ProduceDrinkOrder(DrinkOrderClass drinkOrder[], int countIngridients) {
-	
+
 	Serial.print("LED ON");
 	neoPixelHandler.SetColor_DrinkProduce();
-	//for (int i = 0; i < strip.numPixels(); i++) {
-
-	//	// pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-	//	strip.setPixelColor(i, strip.Color(128, 0, 128)); // Moderately bright green color.
-	//	strip.show(); // This sends the updated pixel color to the hardware.
-	//	delay(100);
-
-	//}
 
 
 	Serial.println("\n\nProduce:\n");
@@ -304,19 +308,6 @@ void ProduceDrinkOrder(DrinkOrderClass drinkOrder[], int countIngridients) {
 	SDHandler.Save(barBotContainer);
 
 	// TODO: 6. Send conformation when the drink is ready?
-
-	neoPixelHandler.SetColor_Off();
-
-	Serial.print("LED OFF");
-	//for (int i = 0; i < strip.numPixels(); i++) {
-
-	//	// pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-	//	strip.setPixelColor(i, strip.Color(0, 0, 0)); // Moderately bright green color.
-	//	strip.show(); // This sends the updated pixel color to the hardware.
-	//	delay(100);
-
-	//}
-
 }
 
 #pragma endregion

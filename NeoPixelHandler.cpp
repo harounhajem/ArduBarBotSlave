@@ -23,27 +23,48 @@ void NeoPixelHandlerClass::NeoPixelRainBow(uint8_t wait)
 
 void NeoPixelHandlerClass::SetColor_DrinkProduce()
 {
-	for (int i = 0; i<_strip.numPixels(); i++) {
+	for (int i = 0; i < _strip.numPixels(); i++) {
 
 		// pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
+		_strip.setBrightness(255);
+
 		_strip.setPixelColor(i, _strip.Color(128, 0, 128)); // Moderately bright green color.
 		_strip.show(); // This sends the updated pixel color to the hardware.
 		delay(90);
-		
+
 	}
 
+	colorFade = true;
+	brightness = 255;
 }
 
 void NeoPixelHandlerClass::SetColor_Off()
 {
-	for (int i = 0; i<_strip.numPixels(); i++) {
+	if (colorFade)
+	{
+		if (millis() - timerFade > 40UL)
+		{
+			brightness--;
 
-		// pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-		_strip.setPixelColor(i, _strip.Color(0, 0, 0)); // Moderately bright green color.
+			for (int i = 0; i < _strip.numPixels(); i++) {
 
-		_strip.show(); // This sends the updated pixel color to the hardware.
-		
 
+				// pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
+				//_strip.setPixelColor(i, _strip.Color(0, 0, 0)); // Moderately bright green color.
+				_strip.setBrightness(brightness);
+				_strip.show(); // This sends the updated pixel color to the hardware.
+
+				if (brightness < 1)
+				{
+					brightness = 255;
+					colorFade = false;
+					Serial.println("\n---------------\nLed Fade fininsh\n---------------");
+				}
+
+			}
+
+			timerFade = millis();
+		}
 	}
 }
 
