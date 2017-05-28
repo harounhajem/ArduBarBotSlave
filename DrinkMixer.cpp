@@ -53,13 +53,13 @@ void DrinkMixerClass::CleanAllTubes()
 	}
 }
 
-void DrinkMixerClass::RunDrinkOrder(unsigned int amountCentiliter, unsigned int bottleNr) {
+void DrinkMixerClass::RunDrinkOrder( int amountCentiliter,  int bottleNr) {
 
 	// Open the bottle soleniod
-	unsigned short const indexAdjustment = 1;
+	unsigned short const indexAdjustment = 2;
 	digitalWrite(soleniod[bottleNr + indexAdjustment], HIGH);
 
-	Serial.print("  Bottle open :");
+	Serial.print("SolPin:");
 	Serial.println(soleniod[bottleNr + indexAdjustment]);
 
 	// Add transport time 2450ms, that is also 1cl, and then multiply 
@@ -69,6 +69,10 @@ void DrinkMixerClass::RunDrinkOrder(unsigned int amountCentiliter, unsigned int 
 		transportPipe = 2450;
 
 	unsigned int delayPumpTime = transportPipe + ((amountCentiliter - liquidInThePipe) * second);
+
+	Serial.print("Deltime: ");
+	Serial.println(delayPumpTime);
+
 
 	// Give the soliniod time to open
 	delay(100);

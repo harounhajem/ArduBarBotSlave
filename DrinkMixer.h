@@ -34,7 +34,7 @@ public:
 
 	void CleanAllTubes();
 
-	void RunDrinkOrder(unsigned int amountCentiliter, unsigned int bottleNr);
+	void RunDrinkOrder( int amountCentiliter,  int bottleNr);
 
 	void init(int tmpairPump, int tmpmotor, int tmpbottle1, int tmpbottle2, int tmpbottle3, int tmpbottle4, int tmpbottle5, int tmpbottle6);
 };

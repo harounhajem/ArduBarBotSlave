@@ -19,15 +19,20 @@ private:
 
 	uint16_t i, j;
 
-	Adafruit_NeoPixel _strip = Adafruit_NeoPixel(16, 10, NEO_GRB + NEO_KHZ800);
+	uint32_t Wheel(byte WheelPos);
 
 public:
+	Adafruit_NeoPixel _strip = Adafruit_NeoPixel(16, 9, NEO_GRB + NEO_KHZ800);
 
 	void NeoPixelRainBow(uint8_t wait);
 
-	uint32_t Wheel(byte WheelPos);
+	void SetColor_DrinkProduce();
+
+	void SetColor_Off();
 
 	void Init(Adafruit_NeoPixel strip);
+
+	NeoPixelHandlerClass(const int numLed, const int ledPin);
 };
 
 extern NeoPixelHandlerClass NeoPixelHandler;

@@ -92,8 +92,6 @@ bool SDCardHandlerClass::Save(Container oldBottles[6])
 		}
 		myFile.print(dataToSave);
 
-		Serial.print("Writing: 1;Name;5123;");
-
 		// close the file:
 		myFile.close();
 

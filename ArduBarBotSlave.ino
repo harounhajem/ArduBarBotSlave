@@ -10,10 +10,10 @@
 #include "SDCardHandler.h"
 
 
-	#pragma region PinOut
+#pragma region PinOut
 
 // Pinout
-#define ledNeoPixel 10
+#define ledNeoPixel 9
 #define airPump 8
 #define motor 12
 #define bottle1 2
@@ -26,7 +26,7 @@
 #define SD_SPI 53
 #pragma endregion		
 
-	#pragma region Variables
+#pragma region Variables
 
 
 // Variables
@@ -34,9 +34,9 @@ unsigned long timerRecive, timerTimeOut;
 
 #pragma endregion
 
-	#pragma region Class declaration
+#pragma region Class declaration
 
-//Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUMstrip, ledNeoPixel, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUMstrip, ledNeoPixel, NEO_GRB + NEO_KHZ800);
 
 // Class declaration
 struct SaveContainer {  // Formatting table for saving BarBotContainer
@@ -77,7 +77,11 @@ void setup()
 	drinkMixer.init(airPump, motor, bottle1, bottle2, bottle3, bottle4, bottle5, bottle6);
 
 	//neoPixelHandler.Init(strip);
+	//neoPixelHandler._strip.begin();
+	strip.begin();
+	//neoPixelHandler.SetColor_Off();
 	//strip.begin();
+
 	//drinkMixer.SetLiquidToStartPos();
 	SDHandler.Load(barBotContainer);
 	//// Read Saved Data
@@ -87,11 +91,13 @@ void setup()
 		Serial.print(barBotContainer[i].GetName());
 		Serial.print("  ");
 		Serial.println(barBotContainer[i].GetAmount());
-	} 
+	}
 }
 
 void loop()
 {
+
+
 	//neoPixelHandler.NeoPixelRainBow(200);
 
 	/*Serial.println("Got a cocktail command");
@@ -119,8 +125,11 @@ void loop()
 
 		case 'f':
 			// Got a Cocktail order
+
+
 			Serial.println("Got a cocktail command");
 			ValidateDrinkOrder();
+
 			break;
 
 		default:
@@ -135,7 +144,7 @@ void loop()
 }
 
 
-	#pragma region Produce cocktail order
+#pragma region Produce cocktail order
 
 void ValidateDrinkOrder() {
 
@@ -212,7 +221,9 @@ void ValidateDrinkOrder() {
 		Serial.print(" Index :");
 		Serial.print(drinkOrder[i].bottleIndex);
 		Serial.print("  Amount :");
-		Serial.println(drinkOrder[i].amount);
+		Serial.print(drinkOrder[i].amount);
+		Serial.println("cl");
+
 	}
 
 
@@ -238,8 +249,10 @@ void ValidateDrinkOrder() {
 
 	if (canProduce)
 	{
+		// 5. Send drink to machine
 		Serial1.println("OK");
 		Serial.println("Produce: OK");
+		ProduceDrinkOrder(drinkOrder, countIngridients);
 	}
 	else
 	{
@@ -247,20 +260,34 @@ void ValidateDrinkOrder() {
 		return;
 	}
 
-	// 5. Send drink to machine
-	ProduceDrinkOrder(drinkOrder, countIngridients);
 }
 
 void ProduceDrinkOrder(DrinkOrderClass drinkOrder[], int countIngridients) {
+	//neoPixelHandler.SetColor_DrinkProduce();
+	Serial.print("LED ON");
+	for (int i = 0; i < strip.numPixels(); i++) {
+
+		// pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
+		strip.setPixelColor(i, strip.Color(128, 0, 128)); // Moderately bright green color.
+		strip.show(); // This sends the updated pixel color to the hardware.
+		delay(100);
+
+	}
+
 
 	Serial.println("\n\nProduce:\n");
 	for (size_t i = 0; i < countIngridients; i++)
 	{
 		// Serial print
-		Serial.print(" Index :");
+		Serial.print(" Index: ");
 		Serial.print(drinkOrder[i].bottleIndex);
-		Serial.print("  Amount :");
-		Serial.println(drinkOrder[i].amount);
+		Serial.print("  Amount: ");
+		Serial.print(drinkOrder[i].amount);
+		Serial.print("cl");
+
+		Serial.print("  |  ");
+		Serial.println(barBotContainer[i].GetName());
+
 
 		// 1. Send drinkorder to liquidPump
 		drinkMixer.RunDrinkOrder(drinkOrder[i].amount, drinkOrder[i].bottleIndex);
@@ -277,11 +304,24 @@ void ProduceDrinkOrder(DrinkOrderClass drinkOrder[], int countIngridients) {
 	SDHandler.Save(barBotContainer);
 
 	// TODO: 6. Send conformation when the drink is ready?
+
+	//neoPixelHandler.SetColor_Off();
+
+	Serial.print("LED OFF");
+	for (int i = 0; i < strip.numPixels(); i++) {
+
+		// pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
+		strip.setPixelColor(i, strip.Color(0, 0, 0)); // Moderately bright green color.
+		strip.show(); // This sends the updated pixel color to the hardware.
+		delay(100);
+
+	}
+
 }
 
 #pragma endregion
 
-	#pragma region Update bottles
+#pragma region Update bottles
 
 void UpdateIngridients() {
 
@@ -317,7 +357,7 @@ void UpdateIngridients() {
 	Serial.println(ingridientsName);
 	Serial.println(ingridientsAmount);
 
-	
+
 	// 3. Updatera barBotContainer
 
 	barBotContainer[ingridientsPos].SetName(ingridientsName);
@@ -332,7 +372,7 @@ void UpdateIngridients() {
 
 #pragma endregion
 
-	
+
 
 
 

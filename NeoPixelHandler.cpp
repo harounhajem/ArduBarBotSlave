@@ -21,6 +21,32 @@ void NeoPixelHandlerClass::NeoPixelRainBow(uint8_t wait)
 	}
 }
 
+void NeoPixelHandlerClass::SetColor_DrinkProduce()
+{
+	for (int i = 0; i<_strip.numPixels(); i++) {
+
+		// pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
+		_strip.setPixelColor(i, _strip.Color(128, 0, 128)); // Moderately bright green color.
+		_strip.show(); // This sends the updated pixel color to the hardware.
+		delay(100);
+		
+	}
+
+}
+
+void NeoPixelHandlerClass::SetColor_Off()
+{
+	for (int i = 0; i<_strip.numPixels(); i++) {
+
+		// pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
+		_strip.setPixelColor(i, _strip.Color(0, 0, 0)); // Moderately bright green color.
+
+		_strip.show(); // This sends the updated pixel color to the hardware.
+		delay(100);
+
+	}
+}
+
 uint32_t NeoPixelHandlerClass::Wheel(byte WheelPos)
 {
 	WheelPos = 255 - WheelPos;
