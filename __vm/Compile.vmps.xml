@@ -98,24 +98,24 @@
 66		Serial1.begin(230400);
 </Source>
       </BreakPoint>
-      <BreakPoint Index="5" Name="DrinkMixer.cpp, line 108" Id="8f4fd9a5-3fc9-4279-9b48-f016e27854c4" Enabled="0" Message="{_airPump}{_motor}{_bottle1}{_bottle2}{_bottle3}{_bottle4}{_bottle5}{_bottle6}{soleniod[0]}{soleniod[1]} {soleniod[2]}{soleniod[3]}{soleniod[4]}" MessageTextType="2" PreProcessedMessage="{0}{1}{2}{3}{4}{5}{6}{7}{8}{9} {10}{11}{12}" Condition="" ConditionType="1" CurrentHits="0" File="c:\users\harou\onedrive\examensarbetet\arduino\ardubarbotslave\drinkmixer.cpp" FileLine="108" FileColumn="1" FunctionName="init(int tmpairPump, int tmpmotor, int tmpbottle1, int tmpbottle2, int tmpbottle3, int tmpbottle4, int tmpbottle5, int tmpbottle6)" FunctionLineOffset="19" FunctionColumnOffset="1" HitCountTarget="1" HitCountType="1" Language="C++" LocationType="3" Tag="&lt;vmbp Id='8f4fd9a5-3fc9-4279-9b48-f016e27854c4'/&gt;" Type="1" ToString="System.__ComObject" BreakWhenHit="0">
-        <Source>101		soleniod[0] = _airPump;
-102		soleniod[1] = _motor;
-103		soleniod[2] = _bottle1;
-104		soleniod[3] = _bottle2;
-105		soleniod[4] = _bottle3;
-106		soleniod[5] = _bottle4;
-107		soleniod[6] = _bottle5;
---&gt;108		soleniod[7] = _bottle6;
-109	
-110		
-111	
-112	
-113		Serial.println("Init, solenoid pos: ");
-114		for (size_t i = 0; i &lt; 8; i++)
-115		{
-116			Serial.print(soleniod[i]);
-117			Serial.print("  ");
+      <BreakPoint Index="5" Name="DrinkMixer.cpp, line 128" Id="8f4fd9a5-3fc9-4279-9b48-f016e27854c4" Enabled="0" Message="{_airPump}{_motor}{_bottle1}{_bottle2}{_bottle3}{_bottle4}{_bottle5}{_bottle6}{soleniod[0]}{soleniod[1]} {soleniod[2]}{soleniod[3]}{soleniod[4]}" MessageTextType="2" PreProcessedMessage="{0}{1}{2}{3}{4}{5}{6}{7}{8}{9} {10}{11}{12}" Condition="" ConditionType="1" CurrentHits="0" File="c:\users\harou\onedrive\examensarbetet\arduino\ardubarbotslave\drinkmixer.cpp" FileLine="128" FileColumn="1" FunctionName="init(int tmpairPump, int tmpmotor, int tmpbottle1, int tmpbottle2, int tmpbottle3, int tmpbottle4, int tmpbottle5, int tmpbottle6)" FunctionLineOffset="19" FunctionColumnOffset="1" HitCountTarget="1" HitCountType="1" Language="C++" LocationType="3" Tag="&lt;vmbp Id='8f4fd9a5-3fc9-4279-9b48-f016e27854c4'/&gt;" Type="1" ToString="System.__ComObject" BreakWhenHit="0">
+        <Source>121		soleniod[0] = _airPump;
+122		soleniod[1] = _motor;
+123		soleniod[2] = _bottle1;
+124		soleniod[3] = _bottle2;
+125		soleniod[4] = _bottle3;
+126		soleniod[5] = _bottle4;
+127		soleniod[6] = _bottle5;
+--&gt;128		soleniod[7] = _bottle6;
+129	
+130		
+131	
+132	
+133		Serial.println("Init, solenoid pos: ");
+134		for (size_t i = 0; i &lt; 8; i++)
+135		{
+136			Serial.print(soleniod[i]);
+137			Serial.print("  ");
 </Source>
         <MessageVariables>
           <MessageVariable Name="_airPump" Index="1" />
@@ -133,24 +133,24 @@
           <MessageVariable Name="soleniod[4]" Index="13" />
         </MessageVariables>
       </BreakPoint>
-      <BreakPoint Index="6" Name="DrinkMixer.cpp, line 112" Id="78367d4f-d783-4979-a70c-8046ec0b8a09" Enabled="0" Message="{soleniod[0]}{soleniod[1]} {soleniod[2]}{soleniod[3]}{soleniod[4]}" MessageTextType="2" PreProcessedMessage="{0}{1} {2}{3}{4}" Condition="" ConditionType="1" CurrentHits="0" File="c:\users\harou\onedrive\examensarbetet\arduino\ardubarbotslave\drinkmixer.cpp" FileLine="112" FileColumn="1" FunctionName="init(int tmpairPump, int tmpmotor, int tmpbottle1, int tmpbottle2, int tmpbottle3, int tmpbottle4, int tmpbottle5, int tmpbottle6)" FunctionLineOffset="23" FunctionColumnOffset="1" HitCountTarget="1" HitCountType="1" Language="C++" LocationType="3" Tag="&lt;vmbp Id='78367d4f-d783-4979-a70c-8046ec0b8a09'/&gt;" Type="1" ToString="System.__ComObject" BreakWhenHit="0">
-        <Source>105		soleniod[4] = _bottle3;
-106		soleniod[5] = _bottle4;
-107		soleniod[6] = _bottle5;
-108		soleniod[7] = _bottle6;
-109	
-110		
-111	
---&gt;112	
-113		Serial.println("Init, solenoid pos: ");
-114		for (size_t i = 0; i &lt; 8; i++)
-115		{
-116			Serial.print(soleniod[i]);
-117			Serial.print("  ");
-118		}
-119		Serial.println();
-120	}
-121	
+      <BreakPoint Index="6" Name="DrinkMixer.cpp, line 132" Id="78367d4f-d783-4979-a70c-8046ec0b8a09" Enabled="0" Message="{soleniod[0]}{soleniod[1]} {soleniod[2]}{soleniod[3]}{soleniod[4]}" MessageTextType="2" PreProcessedMessage="{0}{1} {2}{3}{4}" Condition="" ConditionType="1" CurrentHits="0" File="c:\users\harou\onedrive\examensarbetet\arduino\ardubarbotslave\drinkmixer.cpp" FileLine="132" FileColumn="1" FunctionName="init(int tmpairPump, int tmpmotor, int tmpbottle1, int tmpbottle2, int tmpbottle3, int tmpbottle4, int tmpbottle5, int tmpbottle6)" FunctionLineOffset="23" FunctionColumnOffset="1" HitCountTarget="1" HitCountType="1" Language="C++" LocationType="3" Tag="&lt;vmbp Id='78367d4f-d783-4979-a70c-8046ec0b8a09'/&gt;" Type="1" ToString="System.__ComObject" BreakWhenHit="0">
+        <Source>125		soleniod[4] = _bottle3;
+126		soleniod[5] = _bottle4;
+127		soleniod[6] = _bottle5;
+128		soleniod[7] = _bottle6;
+129	
+130		
+131	
+--&gt;132	
+133		Serial.println("Init, solenoid pos: ");
+134		for (size_t i = 0; i &lt; 8; i++)
+135		{
+136			Serial.print(soleniod[i]);
+137			Serial.print("  ");
+138		}
+139		Serial.println();
+140	}
+141	
 </Source>
         <MessageVariables>
           <MessageVariable Name="soleniod[0]" Index="1" />

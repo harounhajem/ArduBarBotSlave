@@ -277,7 +277,12 @@ void ProduceDrinkOrder(DrinkOrderClass drinkOrder[], int countIngridients) {
 
 	Serial.print("LED ON");
 	neoPixelHandler.SetColor_DrinkProduce();
-
+	
+	////////////// MOTOR STARTUP TIME - Pump air
+	digitalWrite(motor, HIGH);
+	delay(600);
+	///////////////
+	//////////////
 
 	Serial.println("\n\nProduce:\n");
 	for (size_t i = 0; i < countIngridients; i++)

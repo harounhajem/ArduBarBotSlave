@@ -13,7 +13,7 @@ void DrinkMixerClass::SetLiquidToStartPos()
 	{
 		digitalWrite(soleniod[i], HIGH);
 		digitalWrite(_motor, HIGH);
-		delay(1050);
+		delay(550);
 		digitalWrite(soleniod[i], LOW);
 	}
 
@@ -62,15 +62,34 @@ void DrinkMixerClass::RunDrinkOrder( int amountCentiliter,  int bottleNr) {
 	Serial.print("SolPin:");
 	Serial.println(soleniod[bottleNr + indexAdjustment]);
 
-	// Add transport time 2450ms, that is also 1cl, and then multiply 
 	unsigned short const
-		second = 1000,
-		liquidInThePipe = 1,
-		transportPipe = 2450;
+		second =800,
+		liquidInThePipe = 1;
 
-	unsigned int delayPumpTime = transportPipe + ((amountCentiliter - liquidInThePipe) * second);
+	Serial.print("BottleNr Sent in :");
+	Serial.println(bottleNr);
 
-	Serial.print("Deltime: ");
+	int transportPipeLibrary[]{ 850, 750, 725, 500, 500, 500 };
+
+	unsigned int transportPipe = transportPipeLibrary[bottleNr];
+
+	Serial.print("TransportPipe :");
+
+	Serial.println(transportPipe);
+
+
+	if (amountCentiliter - liquidInThePipe < 0)
+	{
+		Serial.print("Cant produce lower then 0cl");
+		return;
+	}
+
+	int amountCalcCl = amountCentiliter - liquidInThePipe > 0 ? amountCentiliter - liquidInThePipe : 0;
+
+	unsigned int delayPumpTime = transportPipe + (amountCalcCl * second);
+
+	Serial.print("DelayPumptime :");
+
 	Serial.println(delayPumpTime);
 
 
@@ -83,6 +102,7 @@ void DrinkMixerClass::RunDrinkOrder( int amountCentiliter,  int bottleNr) {
 	delay(delayPumpTime);
 
 	digitalWrite(soleniod[bottleNr + indexAdjustment], LOW);
+	Serial.println("----------");
 
 }
 

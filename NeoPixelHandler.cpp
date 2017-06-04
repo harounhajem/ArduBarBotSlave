@@ -42,15 +42,13 @@ void NeoPixelHandlerClass::SetColor_Off()
 {
 	if (colorFade)
 	{
-		if (millis() - timerFade > 40UL)
+		if (millis() - timerFade > 38UL)
 		{
 			brightness--;
 
 			for (int i = 0; i < _strip.numPixels(); i++) {
 
 
-				// pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-				//_strip.setPixelColor(i, _strip.Color(0, 0, 0)); // Moderately bright green color.
 				_strip.setBrightness(brightness);
 				_strip.show(); // This sends the updated pixel color to the hardware.
 
@@ -58,7 +56,7 @@ void NeoPixelHandlerClass::SetColor_Off()
 				{
 					brightness = 255;
 					colorFade = false;
-					Serial.println("\n---------------\nLed Fade fininsh\n---------------");
+					Serial.println("\n---------------\nLed Fade Fininsh\n---------------");
 				}
 
 			}
